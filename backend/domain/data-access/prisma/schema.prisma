@@ -10,3 +10,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Plant {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+}
