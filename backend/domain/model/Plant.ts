@@ -1,28 +1,37 @@
 export class Plant {
-    private id: number;
-    private name: String;
-    private description: String;
+    id: number;
+    name: String;
+    description: String;
 
-    constructor(name: String, description: String) {
-        this.setName(name);
-        this.setDescription(description);
+    constructor(id: number, name: String, description: String) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
     }
 
     // getters and setters
-    getName = () => this.name;
+    // getId = () => this.id;
 
-    setName = (name: String) => (this.name = name);
+    // setId = (id: number) => (this.id = id);
 
-    getDescription = () => this.description;
+    // getName = () => this.name;
 
-    setDescription = (description: String) => (this.description = description);
+    // setName = (name: String) => (this.name = name);
+
+    // getDescription = () => this.description;
+
+    // setDescription = (description: String) => (this.description = description);
 
     //equals method
-    equals(id, name, description) {
-        return this.id === id && this.name === name && this.description === description;
-    }
+    // equals(id, name, description) {
+    //     return this.id === id && this.name === name && this.description === description;
+    // }
 
-    static create({ name, description }: Plant): Plant {
-        return new Plant(name, description);
+    static create({ id, name, description }: {
+        id: number;
+        name: String;
+        description: String;
+    }): Plant {
+        return new Plant(id, name, description);
     }
 }

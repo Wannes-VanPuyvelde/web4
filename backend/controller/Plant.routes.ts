@@ -43,7 +43,7 @@ const plantRouter = express.Router();
  *            type: integer
  *            format: int64
  */
-plantRouter.get('/', async (req, res) => {
+plantRouter.get('/', async (req: Request, res: Response) => {
     try {
         const plants = await PlantService.getAllPlants();
         res.status(200).send(plants);
