@@ -1,5 +1,8 @@
-import { Plant } from '../model/Plant';
-import prismaPlant from './Plant.db';
+import { Plant, PrismaClient } from '@prisma/client';
+import { PlantInput } from '../../types/PlantInput';
 
-export const plantMapper = ({ id, name, description }: typeof prismaPlant): Plant =>
-    new Plant({ id, name, description });
+export const plantMapper = (prismaPlant: Plant): PlantInput => ({
+    id: prismaPlant.id,
+    name: prismaPlant.name,
+    description: prismaPlant.description,
+});

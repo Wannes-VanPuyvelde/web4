@@ -10,7 +10,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon -L app.ts --delay 3"
+    "start": "nodemon -L app.ts --delay 3",
+    "devStart": "nodemon app.ts"
   },
   "nodemonConfig": {
     "ext": "ts",
@@ -20,7 +21,7 @@
     }
   },
   "dependencies": {
-    "@prisma/client": "^4.10.1",
+    "@prisma/client": "^4.11.0",
     "@types/swagger-ui-dist": "^3.30.1",
     "@types/swagger-ui-express": "^4.1.3",
     "body-parser": "^1.20.1",

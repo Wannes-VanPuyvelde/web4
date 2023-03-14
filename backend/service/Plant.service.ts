@@ -11,7 +11,7 @@ const getAllPlants = async (): Promise<Plant[]> => {
     }
 };
 
-const getPlantById = async ({ id }: PlantInput): Promise<Plant> => {
+const getPlantById = async ( id : number): Promise<Plant> => {
     if (Number.isNaN(Number(id))) throw new Error('Id must be a number');
   
     const plant = await plantDB.getPlantById({ id});
@@ -20,5 +20,23 @@ const getPlantById = async ({ id }: PlantInput): Promise<Plant> => {
   
     return plant;
   };
-  
-export default { getAllPlants, getPlantById };
+
+const deletePlant = async (id: number): Promise<Plant> => {
+    if (Number.isNaN(Number(id))) throw new Error('Id must be a number');
+
+    const plant = await plantDB.deletePlant({ id });
+
+    if (!plant) throw new Error('Plant not found');
+
+    return plant;
+};
+
+const updatePlant = async (id: number, name:string, description:string): Promise<Plant> => {
+    if (Number.isNaN(Number(id))) throw new Error('Id must be a number');
+
+    const plant = await plantDB.updatePlant({ id, name, description });
+
+    return plant;
+};
+
+export default { getAllPlants, getPlantById, deletePlant, updatePlant};

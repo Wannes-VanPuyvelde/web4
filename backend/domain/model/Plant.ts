@@ -3,8 +3,7 @@ export class Plant {
     name: String;
     description: String;
 
-    constructor(id: number, name: String, description: String) {
-        this.id = id;
+    constructor(name: String, description: String) {
         this.name = name;
         this.description = description;
     }
@@ -27,11 +26,7 @@ export class Plant {
     //     return this.id === id && this.name === name && this.description === description;
     // }
 
-    static create({ id, name, description }: {
-        id: number;
-        name: String;
-        description: String;
-    }): Plant {
-        return new Plant(id, name, description);
+    static create({ name, description }: { name: String; description: String }): Plant {
+        return new Plant(name, description);
     }
 }
