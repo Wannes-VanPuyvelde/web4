@@ -27,14 +27,6 @@ const plantRouter = express.Router();
  * /plants/{id}:
  *   get:
  *      summary: Get a plant by ID
- *      responses:
- *          200:
- *            description: Returns a plant. If the plant does not exist, an error is returned.
- *            content:
- *               application/json:
- *                   schema:
- *                       $ref: '#/components/schemas/Plant'
- *
  *      parameters:
  *        - name: id
  *          in: path
@@ -43,6 +35,31 @@ const plantRouter = express.Router();
  *          schema:
  *            type: integer
  *            format: int64
+ *      responses:
+ *          200:
+ *            description: Returns a plant. If the plant does not exist, an error is returned.
+ *            content:
+ *               application/json:
+ *                   schema:
+ *                       type: object
+ *                       properties:
+ *                           id:
+ *                               type: integer
+ *                               example: 1
+ *                           name:
+ *                               type: string
+ *                               example: Rose
+ *                           description:
+ *                               type: string
+ *                               example: A beautiful flower
+ *                           createdAt:
+ *                               type: string
+ *                               format: date-time
+ *                               example: '2023-04-13T10:00:00.000Z'
+ *          404:
+ *            description: Plant not found.
+ *          500:
+ *            description: An error has occurred, see error message for more details.
  */
 plantRouter.get('/:id', async (req: Request, res: Response) => {
     try {
@@ -59,14 +76,6 @@ plantRouter.get('/:id', async (req: Request, res: Response) => {
  * /plants/{id}:
  *   delete:
  *      summary: Delete a plant by ID
- *      responses:
- *          200:
- *            description: Deletes a plant. If the plant does not exist, an error is returned.
- *            content:
- *               application/json:
- *                   schema:
- *                       $ref: '#/components/schemas/Plant'
- *
  *      parameters:
  *        - name: id
  *          in: path
@@ -75,6 +84,37 @@ plantRouter.get('/:id', async (req: Request, res: Response) => {
  *          schema:
  *            type: integer
  *            format: int64
+ *      responses:
+ *          200:
+ *            description: Deletes a plant. If the plant does not exist, an error is returned.
+ *            content:
+ *               application/json:
+ *                   schema:
+ *                       type: object
+ *                       properties:
+ *                           message:
+ *                               type: string
+ *                               example: Plant deleted successfully
+ *                           data:
+ *                               type: object
+ *                               properties:
+ *                                   id:
+ *                                       type: integer
+ *                                       example: 1
+ *                                   name:
+ *                                       type: string
+ *                                       example: Rose
+ *                                   description:
+ *                                       type: string
+ *                                       example: A beautiful flower
+ *                                   deletedAt:
+ *                                       type: string
+ *                                       format: date-time
+ *                                       example: '2023-04-13T10:00:00.000Z'
+ *          404:
+ *            description: Plant not found.
+ *          500:
+ *            description: An error has occurred, see error message for more details.
  */
 plantRouter.delete('/:id', async (req: Request, res: Response) => {
     try {
@@ -92,28 +132,30 @@ plantRouter.delete('/:id', async (req: Request, res: Response) => {
  *   get:
  *     summary: Get all plants
  *     responses:
- *         200:
- *           description: Get all plants. If there are no plants, an error is returned.
- *           content:
- *              application/json:
- *                  schema:
- *                     type: object
- *                     properties:
- *                         "id":
- *                             type: number
- *                         "name":
- *                             type: string
- *                         "description":
- *                             type: string
- *
- *     responses:
  *       200:
- *         description: Gets all plants.
+ *         description: Returns all plants.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: number
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: "Rose"
+ *                   description:
+ *                     type: string
+ *                     example: "A beautiful flower"
  *       403:
- *         description: not allowed.
+ *         description: Not allowed.
  *       500:
  *         description: An error has occurred, see error message for more details.
  */
+
 plantRouter.get('/', async (req: Request, res: Response) => {
     try {
         const plants = await PlantService.getAllPlants();
@@ -175,25 +217,42 @@ plantRouter.put('/', (req: Request, res: Response) => {
  *   post:
  *     summary: Add a new plant
  *     requestBody:
- *      required: true
- *      content:
+ *       required: true
+ *       content:
  *          application/json:
  *              schema:
  *                  type: object
  *                  properties:
- *                      "name":
+ *                      name:
  *                          type: string
- *                      "description":
+ *                          example: "Rose"
+ *                      description:
  *                          type: string
+ *                          example: "A flowering woody plant"
  *
  *     responses:
  *       200:
- *         description: Add a new plant.
+ *         description: Plant successfully added.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: number
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: "Rose"
+ *                 description:
+ *                   type: string
+ *                   example: "A flowering woody plant"
  *       403:
- *         description: not allowed.
+ *         description: Not allowed.
  *       500:
  *         description: An error has occurred, see error message for more details.
  */
+
 
 plantRouter.post('/add', (req: Request, res: Response) => {
     try {
