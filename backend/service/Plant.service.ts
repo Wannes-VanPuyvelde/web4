@@ -39,4 +39,10 @@ const updatePlant = async (id: number, name:string, description:string): Promise
     return plant;
 };
 
-export default { getAllPlants, getPlantById, deletePlant, updatePlant};
+const addPlant = async (name:string, description:string): Promise<Plant> => {
+    const plant = await plantDB.addPlant({ name, description });
+
+    return plant;
+};
+
+export default { getAllPlants, getPlantById, deletePlant, updatePlant, addPlant};

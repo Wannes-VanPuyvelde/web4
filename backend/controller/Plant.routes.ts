@@ -130,7 +130,6 @@ plantRouter.delete('/:id', async (req: Request, res: Response) => {
  * @swagger
  * /plants:
  *   get:
-<<<<<<< HEAD
  *     summary: Get all plants
  *     responses:
  *       200:
@@ -155,16 +154,6 @@ plantRouter.delete('/:id', async (req: Request, res: Response) => {
  *         description: Not allowed.
  *       500:
  *         description: An error has occurred, see error message for more details.
-=======
- *      summary: Get all plants
- *      responses:
- *          200:
- *            description: Get all plants. If there are no plants, an error is returned.
- *            content:
- *               application/json:
- *                   schema:
- *                       $ref: '#/components/schemas/Plant'
->>>>>>> parent of 0cda977 (fix)
  */
 
 plantRouter.get('/', async (req: Request, res: Response) => {
@@ -223,7 +212,6 @@ plantRouter.put('/update/:id/:name/:description', (req: Request, res: Response) 
     }
 });
 
-<<<<<<< HEAD
 /**
  * @swagger
  * /plants/add:
@@ -266,7 +254,6 @@ plantRouter.put('/update/:id/:name/:description', (req: Request, res: Response) 
  *         description: An error has occurred, see error message for more details.
  */
 
-
 plantRouter.post('/add', (req: Request, res: Response) => {
     try {
         const plantInput: PlantInput = req.body;
@@ -284,6 +271,4 @@ plantRouter.post('/add', (req: Request, res: Response) => {
     }
 });
 
-=======
->>>>>>> parent of 0cda977 (fix)
 export { plantRouter };
