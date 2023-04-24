@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { Plant } from '../model/plant';
-import { plantMapper } from './plant.mapper';
+import { Plant } from '../model/Plant';
+import { plantMapper } from './Plant.mapper';
 import { PlantInput } from '../../types/PlantInput';
 
 const database = new PrismaClient();

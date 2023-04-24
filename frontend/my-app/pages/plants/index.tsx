@@ -1,41 +1,21 @@
-import Head from 'next/head'
-import Header from '../../components/Header';
-import { useEffect, useState } from 'react';
-import PlantService from '../../services/PlantService';
-import { Plant } from '../../types';
-import PlantOverview from '../../components/plants/PlantOverviewTable';
+import { useState, useEffect } from 'react';
+import { Plant } from '../../types/Plant';
+import plantService from '../../services/PlantService';
+import PlantsList from '../../components/plants/PlantList';
 
+const PlantsPage = () => {
+  const [plants, setPlants] = useState<Plant[]>([]);
 
-const Plants: React.FC = () => {
+  useEffect(() => {
+    plantService.getAllPlants().then(setPlants);
+  }, []);
 
-    const [plants, setPlants] = useState<Array<Plant>>([]);
+  return (
+    <div>
+      <h1>Plants</h1>
+      <PlantsList plants={plants} />
+    </div>
+  );
+};
 
-    const getPlants = async () => {
-        console.log("index-getPlants")
-        PlantService.getAllPlants()
-        .then((res) => res.json())
-        .then((plants) =>  setPlants(plants))
-    }
-
-    useEffect(() => {
-        console.log("index-useEffect")
-        getPlants()
-    }, [])
-
-    return (
-        <>
-        <Head>
-            <title>Plants</title>
-        </Head>
-        <Header />
-        <main>
-            <section className="row justify-content-center">
-                <PlantOverview plants={plants} />
-            </section>
-        </main>
-        </>
-    )
-
-}
-
-export default Plants;
+export default PlantsPage;
