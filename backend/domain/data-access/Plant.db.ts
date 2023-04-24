@@ -29,8 +29,10 @@ const getPlantById = async ({ id }: { id: number }): Promise<Plant> => {
     }
 };
 
-const addPlant = async ({name,description,}: 
-    {
+const addPlant = async ({
+    name,
+    description,
+}: {
     name: string;
     description: string;
 }): Promise<Plant> => {
@@ -65,6 +67,7 @@ const updatePlant = async ({ id, name, description }) => {
     const prismaPlant = await database.plant.update({
         where: { id },
         data: {
+            id,
             name,
             description,
         },
