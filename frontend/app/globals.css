@@ -25,3 +25,33 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+/* Update the existing body CSS rules */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* Add new CSS rules for the header and links */
+nav ul {
+  display: flex;
+  list-style-type: none;
+}
+
+nav li {
+  margin-right: 0.5rem;
+}
+
+nav a {
+  color: inherit;
+}
+

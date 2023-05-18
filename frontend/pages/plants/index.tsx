@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import Layout from '../../app/layout';
 
 interface Plant {
   id: number;
   name: string;
+  description: string;
 }
 
 const Plants = () => {
@@ -16,15 +17,16 @@ const Plants = () => {
   }, []);
 
   return (
-    <div>
+    <Layout>
       <h1>Plants</h1>
       <ul>
         {plants.map((plant) => (
-          <li key={plant.id}>{plant.name}</li>
+          <li key={plant.id}>
+            <strong>ID:</strong> {plant.id}, <strong>Name:</strong> {plant.name}, <strong>Description:</strong> {plant.description}
+          </li>
         ))}
       </ul>
-      <Link to="/plants/add">Add Plant</Link>
-    </div>
+    </Layout>
   );
 };
 
