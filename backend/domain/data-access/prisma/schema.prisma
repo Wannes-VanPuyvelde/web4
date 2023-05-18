@@ -15,3 +15,10 @@ model Plant {
   name        String
   description String
 }
+
+model Light{
+  id          Int    @id @default(autoincrement())
+  name        String
+  time_on     Int
+  light_color String
+}
