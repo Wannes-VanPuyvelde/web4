@@ -20,21 +20,36 @@ const Plants = () => {
   return (
     <Layout>
       <h1>Plants</h1>
-      <ul>
-        {plants.map((plant) => (
-          <li key={plant.id}>
-            <strong>ID:</strong> {plant.id}, <strong>Name:</strong> {plant.name}, <strong>Description:</strong> {plant.description}
-            {' '}
-            <Link href={`/plants/edit?id=${plant.id}`} as={`/plants/edit/${plant.id}`}>
-              Edit
-            </Link>
-            {' '}
-            <Link href={`/plants/delete?id=${plant.id}`} as={`/plants/delete/${plant.id}`}>
-              Delete
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {plants.map((plant) => (
+            <tr key={plant.id}>
+              <td>{plant.id}</td>
+              <td>{plant.name}</td>
+              <td>{plant.description}</td>
+              <td>
+                <Link href={`/plants/edit?id=${plant.id}`} as={`/plants/edit/${plant.id}`}>
+                  Edit
+                </Link>
+              </td>
+              <td>
+                <Link href={`/plants/delete?id=${plant.id}`} as={`/plants/delete/${plant.id}`}>
+                  X
+                </Link>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </Layout>
   );
 };

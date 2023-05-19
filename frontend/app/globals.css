@@ -1,94 +1,91 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
+/* globals.css */
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-/* Update the existing body CSS rules */
-body {
-  min-height: 100vh;
+nav {
+  background-color: #f0f0f0;
+  border-bottom: 3px solid #4caf50;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  justify-content: center;
+  padding: 10px 0;
 }
 
-/* Add new CSS rules for the header and links */
-nav ul {
-  display: flex;
+ul {
   list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
-nav li {
-  margin-right: 0.5rem;
+li {
+  display: inline;
+  margin-right: 20px;
 }
 
-nav a {
-  color: inherit;
-}
-
-/* Set primary color to green */
-:root {
-  --primary-color: #4caf50;
-}
-
-/* Set the background color to a light shade of green */
-body {
-  background-color: #f1f8e9;
-}
-
-/* Set the font family and size */
-body {
-  font-family: 'Roboto', sans-serif;
-  font-size: 16px;
-}
-
-/* Set the header to be a flex container with horizontal layout */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background-color: var(--primary-color);
-  color: #fff;
-}
-
-/* Style the links in the header */
-header a {
-  color: #fff;
+a {
+  color: #4caf50;
   text-decoration: none;
-  margin-left: 1rem;
 }
 
-header a:hover {
+a:hover {
   text-decoration: underline;
 }
 
+main {
+  margin: 20px;
+}
+
+button {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+}
+
+button:hover {
+  background-color: #45a049;
+  color: white;
+}
+
+input[type="text"] {
+  border: 1px solid #ccc;
+  border-radius:4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  margin: 8px 0;
+  padding: 12px 20px;
+  width: 100%;
+}
+
+form {
+  max-width: 600px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
