@@ -2,7 +2,7 @@
  * @swagger
  *   components:
  *    schemas:
- *      Plant:
+ *      Light:
  *          type: object
  *          properties:
  *            id:
@@ -11,33 +11,36 @@
  *            name:
  *              type: string
  *              description: Plant name.
- *            description:
+ *            time_on:
+ *              type: number
+ *              description: Time the light has to stay on.
+ *            light_color:
  *              type: string
- *              description: Plant description.
+ *              description: The color of the light.
  *
  */
+
 import express, { Request, Response } from 'express';
-import PlantService from '../service/Plant.service';
-import { PlantInput } from '../types/PlantInput';
+import LightService from '../service/Light.service';
+import { LightInput } from '../types/LightInput';
 
-const plantRouter = express.Router();
-
+const lightRouter = express.Router();
 /**
  * @swagger
- * /plants/{id}:
+ * /lights/{id}:
  *   get:
- *      summary: Get a plant by ID
+ *      summary: Get a light by ID
  *      parameters:
  *        - name: id
  *          in: path
- *          description: Plant ID
+ *          description: Light ID
  *          required: true
  *          schema:
  *            type: integer
  *            format: int64
  *      responses:
  *          200:
- *            description: Returns a plant. If the plant does not exist, an error is returned.
+ *            description: Returns a light. If the light does not exist, an error is returned.
  *            content:
  *               application/json:
  *                   schema:
@@ -48,20 +51,23 @@ const plantRouter = express.Router();
  *                               example: 1
  *                           name:
  *                               type: string
- *                               example: Rose
- *                           description:
- *                               type: string
- *                               example: A beautiful flower
+ *                               example: LivingLamp
+ *                           time_On:
+ *                                type: number
+ *                                example: 5
+ *                           light_color:
+ *                                type: string
+ *                                example: K1000
  *          404:
- *            description: Plant not found.
+ *            description: Light not found.
  *          500:
  *            description: An error has occurred, see error message for more details.
  */
-plantRouter.get('/:id', async (req: Request, res: Response) => {
+lightRouter.get('/:id', async (req: Request, res: Response) => {
     try {
         const id = parseInt(req.params.id);
-        const plants = await PlantService.getPlantById(id);
-        res.status(200).send(plants);
+        const light = await LightService.getLightById(id);
+        res.status(200).send(light);
     } catch (error) {
         res.status(500).json({ error: 'error', errorMessage: error.message });
     }
@@ -69,20 +75,20 @@ plantRouter.get('/:id', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /plants/{id}:
+ * /Lights/{id}:
  *   delete:
- *      summary: Delete a plant by ID
+ *      summary: Delete a light by ID
  *      parameters:
  *        - name: id
  *          in: path
- *          description: Plant ID
+ *          description: Light ID
  *          required: true
  *          schema:
  *            type: integer
  *            format: int64
  *      responses:
  *          200:
- *            description: Deletes a plant. If the plant does not exist, an error is returned.
+ *            description: Deletes a light. If the light does not exist, an error is returned.
  *            content:
  *               application/json:
  *                   schema:
@@ -90,7 +96,7 @@ plantRouter.get('/:id', async (req: Request, res: Response) => {
  *                       properties:
  *                           message:
  *                               type: string
- *                               example: Plant deleted successfully
+ *                               example: Light deleted successfully
  *                           data:
  *                               type: object
  *                               properties:
@@ -99,20 +105,23 @@ plantRouter.get('/:id', async (req: Request, res: Response) => {
  *                                       example: 1
  *                                   name:
  *                                       type: string
- *                                       example: Rose
- *                                   description:
+ *                                       example: LivingLamp
+ *                                   time_On:
+ *                                       type: number
+ *                                       example: 5
+ *                                   light_color:
  *                                       type: string
- *                                       example: A beautiful flower
+ *                                   example: K1000
  *          404:
  *            description: Plant not found.
  *          500:
  *            description: An error has occurred, see error message for more details.
  */
-plantRouter.delete('/:id', async (req: Request, res: Response) => {
+lightRouter.delete('/:id', async (req: Request, res: Response) => {
     try {
         const id = parseInt(req.params.id);
-        const plants = await PlantService.deletePlant(id);
-        res.status(200).send(plants);
+        const light = await LightService.deleteLight(id);
+        res.status(200).send(light);
     } catch (error) {
         res.status(500).json({ error: 'error', errorMessage: error.message });
     }
@@ -120,12 +129,12 @@ plantRouter.delete('/:id', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /plants:
+ * /lights:
  *   get:
- *     summary: Get all plants
+ *     summary: Get all lights
  *     responses:
  *       200:
- *         description: Returns all plants.
+ *         description: Returns all lights.
  *         content:
  *           application/json:
  *             schema:
@@ -138,20 +147,23 @@ plantRouter.delete('/:id', async (req: Request, res: Response) => {
  *                     example: 1
  *                   name:
  *                     type: string
- *                     example: "Rose"
- *                   description:
+ *                     example: "LivingLamp"
+ *                   time_On:
+ *                     type: number
+ *                     example: 5
+ *                   light_color:
  *                     type: string
- *                     example: "A beautiful flower"
+ *                     example: K1000
  *       403:
  *         description: Not allowed.
  *       500:
  *         description: An error has occurred, see error message for more details.
  */
 
-plantRouter.get('/', async (req: Request, res: Response) => {
+lightRouter.get('/', async (req: Request, res: Response) => {
     try {
-        const plants = await PlantService.getAllPlants();
-        res.status(200).send(plants);
+        const lights = await LightService.getAllLights();
+        res.status(200).send(lights);
     } catch (error) {
         res.status(500).json({ error: 'error', errorMessage: error.message });
     }
@@ -159,56 +171,64 @@ plantRouter.get('/', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /plants/{id,name,description}:
+ * /lights/{id,name,time_on,light_color}:
  *   put:
- *      summary: Update a plant
+ *      summary: Update a light
  *      responses:
  *          200:
- *            description: Updates a plant. If the plant does not exist, an error is returned.
+ *            description: Updates a light. If the light does not exist, an error is returned.
  *            content:
  *               application/json:
  *                   schema:
- *                       $ref: '#/components/schemas/Plant'
+ *                       $ref: '#/components/schemas/Light'
  *
  *      parameters:
  *        - name: id
  *          in: path
- *          description: Plant ID
+ *          description: Light ID
  *          required: true
  *          schema:
  *            type: integer
  *            format: int64
  *        - name: name
  *          in: path
- *          description: Plant name
+ *          description: Light name
  *          required: true
  *          schema:
  *            type: string
- *        - name: description
+ *        - name: time_on
  *          in: path
- *          description: Plant description
+ *          description: Time the light has to stay on.
+ *          required: true
+ *          schema:
+ *            type: int64
+ *        - name: light_color
+ *          in: Path
+ *          description: The color of the light.
  *          required: true
  *          schema:
  *            type: string
  */
 
-plantRouter.put('/update/:id/:name/:description', (req: Request, res: Response) => {
+lightRouter.put('/update/:id/:name/:time_on/:light_color', (req: Request, res: Response) => {
     try {
         const id = parseInt(req.params.id);
         const name = req.params.name;
-        const description = req.params.description;
-        const plant = PlantService.updatePlant(id, name, description);
-        res.status(200).send(plant);
+        const time_on = parseInt(req.params.time_on);
+        const light_color = req.params.light_color;
+        const light = LightService.updateLight(id, name, time_on, light_color);
+        res.status(200).send(light);
     } catch (error) {
         res.status(500).json({ error: 'error', errorMessage: error.message });
     }
 });
 
+
 /**
  * @swagger
- * /plants/add:
+ * /lights/add:
  *   post:
- *     summary: Add a new plant
+ *     summary: Add a new Light
  *     requestBody:
  *       required: true
  *       content:
@@ -218,14 +238,17 @@ plantRouter.put('/update/:id/:name/:description', (req: Request, res: Response) 
  *                  properties:
  *                      name:
  *                          type: string
- *                          example: "Rose"
- *                      description:
+ *                          example: "LivingLamp"
+ *                      time_on:
+ *                          type: number
+ *                          example: 5
+ *                      light_color:
  *                          type: string
- *                          example: "A flowering woody plant"
+ *                          example: K1000
  *
  *     responses:
  *       200:
- *         description: Plant successfully added.
+ *         description: Light successfully added.
  *         content:
  *           application/json:
  *             schema:
@@ -236,25 +259,29 @@ plantRouter.put('/update/:id/:name/:description', (req: Request, res: Response) 
  *                   example: 1
  *                 name:
  *                   type: string
- *                   example: "Rose"
- *                 description:
+ *                   example: "LivingLamp"
+ *                 time_On:
+ *                   type: number
+ *                   example: 5
+ *                 light_color:
  *                   type: string
- *                   example: "A flowering woody plant"
+ *                   example: K1000
  *       403:
  *         description: Not allowed.
  *       500:
  *         description: An error has occurred, see error message for more details.
  */
 
-plantRouter.post('/add', (req: Request, res: Response) => {
+lightRouter.post('/add', (req: Request, res: Response) => {
     try {
-        const plantInput: PlantInput = req.body;
-        const parsePlant: PlantInput = {
-            id: plantInput.id,
-            name: plantInput.name,
-            description: plantInput.description,
+        const lightInput: LightInput = req.body;
+        const parseLight: LightInput = {
+            id: lightInput.id,
+            name: lightInput.name,
+            time_on: lightInput.time_on,
+            light_color: lightInput.light_color
         };
-        const plantCreated = PlantService.addPlant(parsePlant.name, parsePlant.description);
+        const plantCreated = LightService.addLight(parseLight.name, parseLight.time_on, parseLight.light_color);
         plantCreated.then(function (result) {
             res.status(200).json(result);
         });
@@ -263,4 +290,5 @@ plantRouter.post('/add', (req: Request, res: Response) => {
     }
 });
 
-export { plantRouter };
+
+export { lightRouter };
