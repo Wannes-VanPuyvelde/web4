@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import Layout from '../../app/layout';
 
 interface Plant {
@@ -9,23 +9,24 @@ interface Plant {
 }
 
 const DeletePlant = () => {
-  const { id } = useParams();
+  const router = useRouter();
+  const { id } = router.query;
   const [name, setName] = useState('');
-  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://localhost:3000/plants/${id}`)
-      .then((response) => response.json())
-      .then((data) => setName(data.name));
+    if (id) {
+      fetch(`http://localhost:3000/plants/${id}`)
+        .then((response) => response.json())
+        .then((data) => setName(data.name));
+    }
   }, [id]);
 
-  const handleDelete = () => {
-    fetch(`http://localhost:3000/plants/${id}`, {
+  const handleDelete = async () => {
+    await fetch(`http://localhost:3000/plants/${id}`, {
       method: 'DELETE',
-    }).then(() => {
-      console.log('Plant deleted');
-      navigate('/plants');
     });
+
+    router.push('/plants');
   };
 
   return (
@@ -36,7 +37,7 @@ const DeletePlant = () => {
         {`"${name}"`} {/* Add backticks (`) around the quotation marks */}
       </p>
       <button onClick={handleDelete}>Yes, delete</button>
-      <button onClick={() => navigate('/plants')}>No, go back</button>
+      <button onClick={() => router.push('/plants')}>No, go back</button>
     </Layout>
   );
 };

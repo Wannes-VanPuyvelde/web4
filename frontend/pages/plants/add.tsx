@@ -1,25 +1,23 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '../../app/layout';
 
 const AddPlant = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetch('http://localhost:3000/plants/add', {
+    await fetch('http://localhost:3000/plants/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ name, description }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Plant added:', data);
-        setName('');
-        setDescription('');
-      });
+    });
+
+    router.push('/plants');
   };
 
   return (

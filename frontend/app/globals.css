@@ -55,3 +55,40 @@ nav a {
   color: inherit;
 }
 
+/* Set primary color to green */
+:root {
+  --primary-color: #4caf50;
+}
+
+/* Set the background color to a light shade of green */
+body {
+  background-color: #f1f8e9;
+}
+
+/* Set the font family and size */
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+}
+
+/* Set the header to be a flex container with horizontal layout */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+/* Style the links in the header */
+header a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 1rem;
+}
+
+header a:hover {
+  text-decoration: underline;
+}
+

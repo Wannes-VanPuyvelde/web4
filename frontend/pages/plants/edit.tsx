@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import Layout from '../../app/layout';
 
 interface Plant {
@@ -9,30 +9,33 @@ interface Plant {
 }
 
 const EditPlant = () => {
-  const { id } = useParams();
+  const router = useRouter();
+  const { id } = router.query;
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
   useEffect(() => {
-    fetch(`http://localhost:3000/plants/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setName(data.name);
-        setDescription(data.description);
-      });
+    if (id) {
+      fetch(`http://localhost:3000/plants/${id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setName(data.name);
+          setDescription(data.description);
+        });
+    }
   }, [id]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetch(`http://localhost:3000/plants/${id}`, {
+    await fetch(`http://localhost:3000/plants/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ name, description }),
-    }).then(() => {
-      console.log('Plant updated');
     });
+
+    router.push('/plants');
   };
 
   return (
