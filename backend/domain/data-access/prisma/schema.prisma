@@ -8,28 +8,25 @@ datasource db {
 }
 
 model Plant {
-  id          Int    @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   name        String
   description String
   Lights      PlantLights[]
 }
-<<<<<<< Updated upstream
-=======
 
-model Light{
-  id          Int    @id @default(autoincrement())
+model Light {
+  id          Int           @id @default(autoincrement())
   name        String
   time_on     Int
   light_color String
   Plants      PlantLights[]
 }
 
-model PlantLights{
-  plant       Plant @relation(fields: [plantId], references: [id])
-  plantId     Int
-  light       Light @relation(fields: [lightId], references: [id])
-  lightId     Int
+model PlantLights {
+  plant   Plant @relation(fields: [plantId], references: [id])
+  plantId Int
+  light   Light @relation(fields: [lightId], references: [id])
+  lightId Int
 
   @@id([plantId, lightId])
 }
->>>>>>> Stashed changes
