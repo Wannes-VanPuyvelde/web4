@@ -159,50 +159,57 @@ plantRouter.get('/', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /plants/{id,name,description}:
+ * /plants/{id}:
  *   put:
- *      summary: Update a plant
- *      responses:
- *          200:
- *            description: Updates a plant. If the plant does not exist, an error is returned.
- *            content:
- *               application/json:
- *                   schema:
- *                       $ref: '#/components/schemas/Plant'
- *
- *      parameters:
- *        - name: id
- *          in: path
- *          description: Plant ID
- *          required: true
- *          schema:
- *            type: integer
- *            format: int64
- *        - name: name
- *          in: path
- *          description: Plant name
- *          required: true
- *          schema:
- *            type: string
- *        - name: description
- *          in: path
- *          description: Plant description
- *          required: true
- *          schema:
- *            type: string
+ *     summary: Update a plant
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the plant to update
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *          application/json:
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                          example: "Rose"
+ *                      description:
+ *                          type: string
+ *                          example: "A flowering woody plant"
+ *     responses:
+ *       200:
+ *         description: Plant successfully updated.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Plant'
+ *       403:
+ *         description: Not allowed.
+ *       500:
+ *         description: An error has occurred, see error message for more details.
  */
 
-plantRouter.put('/update/:id/:name/:description', (req: Request, res: Response) => {
+plantRouter.put('/:id', (req: Request, res: Response) => {
     try {
-        const id = parseInt(req.params.id);
-        const name = req.params.name;
-        const description = req.params.description;
-        const plant = PlantService.updatePlant(id, name, description);
-        res.status(200).send(plant);
+        const plantId: number = Number(req.params.id);
+        const plantInput: PlantInput = req.body;
+
+        const updatedPlant = PlantService.updatePlant(plantId, plantInput.name, plantInput.description);
+        updatedPlant.then(function (result) {
+            res.status(200).json(result);
+        });
     } catch (error) {
-        res.status(500).json({ error: 'error', errorMessage: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 });
+
+
 
 /**
  * @swagger

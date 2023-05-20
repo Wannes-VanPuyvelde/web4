@@ -31,13 +31,15 @@ const deletePlant = async (id: number): Promise<Plant> => {
     return plant;
 };
 
-const updatePlant = async (id: number, name:string, description:string): Promise<Plant> => {
+const updatePlant = async (id: number, name: string, description: string): Promise<Plant> => {
     if (Number.isNaN(Number(id))) throw new Error('Id must be a number');
 
     const plant = await plantDB.updatePlant({ id, name, description });
 
     return plant;
 };
+
+
 
 const addPlant = async (name:string, description:string): Promise<Plant> => {
     const plant = await plantDB.addPlant({ name, description });
