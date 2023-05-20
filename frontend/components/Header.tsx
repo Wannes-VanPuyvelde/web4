@@ -21,6 +21,16 @@ const Header = () => {
             Add Plant
           </Link>
         </li>
+        <li className="mr-4">
+          <Link href="/lights">
+            Light Overview
+          </Link>
+        </li>
+        <li className="mr-4">
+          <Link href="/lights/add">
+            Add Light
+          </Link>
+        </li>
       </ul>
     </nav>
   );

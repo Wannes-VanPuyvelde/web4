@@ -1,6 +1,5 @@
 import { Plant } from '../domain/model/Plant';
 import plantDB from '../domain/data-access/Plant.db';
-import { PlantInput } from '../types/PlantInput';
 
 const getAllPlants = async (): Promise<Plant[]> => {
     try {

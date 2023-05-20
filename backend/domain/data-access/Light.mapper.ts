@@ -1,4 +1,4 @@
-import { Light, PrismaClient } from '@prisma/client';
+import { Light } from '@prisma/client';
 import {LightInput} from '../../types/LightInput'
 
 export const LightMapper = (prismaLight: Light): LightInput => ({

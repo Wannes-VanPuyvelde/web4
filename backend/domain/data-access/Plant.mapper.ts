@@ -1,4 +1,4 @@
-import { Plant, PrismaClient } from '@prisma/client';
+import { Plant } from '@prisma/client';
 import { PlantInput } from '../../types/PlantInput';
 
 export const plantMapper = (prismaPlant: Plant): PlantInput => ({

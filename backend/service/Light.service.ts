@@ -1,6 +1,5 @@
 import { Light } from '../domain/model/Light';
 import LightDB from '../domain/data-access/Light.db';
-import { LightInput } from '../types/LightInput';
 
 const getAllLights = async (): Promise<Light[]> => {
     try {

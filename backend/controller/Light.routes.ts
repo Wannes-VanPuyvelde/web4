@@ -171,57 +171,59 @@ lightRouter.get('/', async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /lights/{id,name,time_on,light_color}:
+ * /lights/{id}:
  *   put:
- *      summary: Update a light
- *      responses:
- *          200:
- *            description: Updates a light. If the light does not exist, an error is returned.
- *            content:
- *               application/json:
- *                   schema:
- *                       $ref: '#/components/schemas/Light'
- *
- *      parameters:
- *        - name: id
- *          in: path
- *          description: Light ID
- *          required: true
- *          schema:
- *            type: integer
- *            format: int64
- *        - name: name
- *          in: path
- *          description: Light name
- *          required: true
- *          schema:
- *            type: string
- *        - name: time_on
- *          in: path
- *          description: Time the light has to stay on.
- *          required: true
- *          schema:
- *            type: int64
- *        - name: light_color
- *          in: Path
- *          description: The color of the light.
- *          required: true
- *          schema:
- *            type: string
+ *     summary: Update a light
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the light to update
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *          application/json:
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                          example: "LivingLamp"
+ *                      time_on:
+ *                          type: integer
+ *                          example: 5
+ *                      light_color:
+ *                          type: string
+ *                          example: "K1000"
+ *     responses:
+ *       200:
+ *         description: Light successfully updated.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Light'
+ *       403:
+ *         description: Not allowed.
+ *       500:
+ *         description: An error has occurred, see error message for more details.
  */
 
-lightRouter.put('/update/:id/:name/:time_on/:light_color', (req: Request, res: Response) => {
+lightRouter.put('/:id', (req: Request, res: Response) => {
     try {
-        const id = parseInt(req.params.id);
-        const name = req.params.name;
-        const time_on = parseInt(req.params.time_on);
-        const light_color = req.params.light_color;
-        const light = LightService.updateLight(id, name, time_on, light_color);
-        res.status(200).send(light);
+        const lightId: number = Number(req.params.id);
+        const lightInput: LightInput = req.body;
+
+        const updatedLight = LightService.updateLight(lightId, lightInput.name, lightInput.time_on, lightInput.light_color);
+        updatedLight.then(function (result) {
+            res.status(200).json(result);
+        });
     } catch (error) {
-        res.status(500).json({ error: 'error', errorMessage: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 });
+
 
 
 /**

@@ -14,8 +14,12 @@ const Plants = () => {
   useEffect(() => {
     fetch('http://localhost:3000/plants')
       .then((response) => response.json())
-      .then((data) => setPlants(data));
-  }, []);
+      .then((data) => {
+        // Sort the plants by id
+        const sortedData = data.sort((a: Plant, b: Plant) => a.id - b.id);
+        setPlants(sortedData);
+      });
+    }, []);
 
   return (
     <Layout>

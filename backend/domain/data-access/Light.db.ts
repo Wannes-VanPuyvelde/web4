@@ -1,9 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Light } from "../model/Light";
 import { LightMapper } from "./Light.mapper";
-import { LightInput } from "../../types/LightInput";
-
-
 
 const database = new PrismaClient();
 
