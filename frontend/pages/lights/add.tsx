@@ -4,7 +4,7 @@ import Layout from '../../app/layout';
 
 const AddLight = () => {
   const [name, setName] = useState('');
-  const [time_on, setTimeOn] = useState(0);
+  const [light_on, setLightOn] = useState(false); // Updated to boolean
   const [light_color, setLightColor] = useState('');
   const router = useRouter();
 
@@ -15,7 +15,7 @@ const AddLight = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, time_on, light_color }),
+      body: JSON.stringify({ name, light_on, light_color }), // Updated variable name
     });
 
     router.push('/lights');
@@ -35,11 +35,11 @@ const AddLight = () => {
         </label>
         <br />
         <label>
-          Time On:
+          Light On:
           <input
-            type="number"
-            value={time_on}
-            onChange={(e) => setTimeOn(parseInt(e.target.value))}
+            type="checkbox" 
+            checked={light_on} 
+            onChange={(e) => setLightOn(e.target.checked)}
           />
         </label>
         <br />

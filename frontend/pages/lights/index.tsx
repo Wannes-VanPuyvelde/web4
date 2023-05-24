@@ -5,7 +5,7 @@ import Layout from '../../app/layout';
 interface Light {
   id: number;
   name: string;
-  time_on: number;
+  light_on: boolean;
   light_color: string;
 }
 
@@ -30,7 +30,7 @@ const Lights = () => {
           <tr>
             <th>ID</th>
             <th>Name</th>
-            <th>Time On</th>
+            <th>Light On</th>
             <th>Light Color</th>
             <th>Edit</th>
             <th>Delete</th>
@@ -41,7 +41,7 @@ const Lights = () => {
             <tr key={light.id}>
               <td>{light.id}</td>
               <td>{light.name}</td>
-              <td>{light.time_on}</td>
+              <td>{light.light_on ? 'On' : 'Off'}</td>
               <td>{light.light_color}</td>
               <td>
                 <Link href={`/lights/edit?id=${light.id}`} as={`/lights/edit/${light.id}`}>

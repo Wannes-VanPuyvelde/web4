@@ -30,16 +30,16 @@ const deleteLight = async (id: number): Promise<Light> => {
     return light;
 };
 
-const updateLight = async (id: number, name:string, time_on:number, light_color:string): Promise<Light> => {
+const updateLight = async (id: number, name:string, light_on:boolean, light_color:string): Promise<Light> => {
     if (Number.isNaN(Number(id))) throw new Error('Id must be a number');
 
-    const light = await LightDB.updateLight({ id, name, time_on, light_color});
+    const light = await LightDB.updateLight({ id, name, light_on, light_color});
 
     return light;
 };
 
-const addLight = async (name:string, time_on:number, light_color:string): Promise<Light> => {
-    const light = await LightDB.addLight({ name, time_on, light_color });
+const addLight = async (name:string, light_on:boolean, light_color:string): Promise<Light> => {
+    const light = await LightDB.addLight({ name, light_on, light_color });
 
     return light;
 };

@@ -29,18 +29,18 @@ const getLightById = async ({id}: {id:number}): Promise<Light> => {
 
 const addLight = async ({
     name,
-    time_on,
+    light_on,
     light_color,
 }: {
     name: string;
-    time_on: number;
+    light_on: boolean;
     light_color: string;
 }): Promise<Light> => {
     try {
         const prismaLight = await database.light.create({
             data: {
                 name,
-                time_on,
+                light_on,
                 light_color,
             },
         });
@@ -64,13 +64,13 @@ const deleteLight = async ({ id }: { id: number }): Promise<Light> => {
     }
 };
 
-const updateLight = async ({ id, name, time_on, light_color }) => {
+const updateLight = async ({ id, name, light_on, light_color }) => {
     const prismaLight = await database.light.update({
         where: { id },
         data: {
             id,
             name,
-            time_on,
+            light_on,
             light_color,
         },
     });

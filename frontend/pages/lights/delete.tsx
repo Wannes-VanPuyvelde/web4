@@ -5,7 +5,7 @@ import Layout from '../../app/layout';
 interface Light {
   id: number;
   name: string;
-  time_on: number;
+  light_on: boolean;
   light_color: string;
 }
 

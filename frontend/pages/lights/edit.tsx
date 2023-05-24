@@ -5,7 +5,7 @@ import Layout from '../../app/layout';
 interface Light {
   id: number;
   name: string;
-  time_on: number;
+  light_on: boolean;
   light_color: string;
 }
 
@@ -13,7 +13,7 @@ const EditLight = () => {
   const router = useRouter();
   const { id } = router.query;
   const [name, setName] = useState('');
-  const [time_on, setTimeOn] = useState(0);
+  const [light_on, setLightOn] = useState(false);
   const [light_color, setLightColor] = useState('');
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const EditLight = () => {
         .then((response) => response.json())
         .then((data) => {
           setName(data.name);
-          setTimeOn(data.time_on);
+          setLightOn(data.light_on);
           setLightColor(data.light_color);
         });
     }
@@ -35,7 +35,7 @@ const EditLight = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, time_on, light_color }),
+      body: JSON.stringify({ name, light_on, light_color }), // Updated variable name
     });
 
     router.push('/lights');
@@ -55,11 +55,11 @@ const EditLight = () => {
         </label>
         <br />
         <label>
-          Time On:
+          Light On:
           <input
-            type="number"
-            value={time_on}
-            onChange={(e) => setTimeOn(parseInt(e.target.value))}
+            type="checkbox"
+            checked={light_on}
+            onChange={(e) => setLightOn(e.target.checked)}
           />
         </label>
         <br />

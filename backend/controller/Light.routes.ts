@@ -11,9 +11,9 @@
  *            name:
  *              type: string
  *              description: Plant name.
- *            time_on:
- *              type: number
- *              description: Time the light has to stay on.
+ *            light_on:
+ *              type: boolean
+ *              description: Status if the light is on or off.
  *            light_color:
  *              type: string
  *              description: The color of the light.
@@ -52,9 +52,9 @@ const lightRouter = express.Router();
  *                           name:
  *                               type: string
  *                               example: LivingLamp
- *                           time_On:
- *                                type: number
- *                                example: 5
+ *                           light_on:
+ *                                type: boolean
+ *                                example: false
  *                           light_color:
  *                                type: string
  *                                example: K1000
@@ -106,9 +106,9 @@ lightRouter.get('/:id', async (req: Request, res: Response) => {
  *                                   name:
  *                                       type: string
  *                                       example: LivingLamp
- *                                   time_On:
- *                                       type: number
- *                                       example: 5
+ *                                   light_on:
+ *                                       type: boolean
+ *                                       example: false
  *                                   light_color:
  *                                       type: string
  *                                   example: K1000
@@ -148,9 +148,9 @@ lightRouter.delete('/:id', async (req: Request, res: Response) => {
  *                   name:
  *                     type: string
  *                     example: "LivingLamp"
- *                   time_On:
- *                     type: number
- *                     example: 5
+ *                   light_on:
+ *                     type: boolean
+ *                     example: false
  *                   light_color:
  *                     type: string
  *                     example: K1000
@@ -191,9 +191,9 @@ lightRouter.get('/', async (req: Request, res: Response) => {
  *                      name:
  *                          type: string
  *                          example: "LivingLamp"
- *                      time_on:
- *                          type: integer
- *                          example: 5
+ *                      light_on:
+ *                          type: boolean
+ *                          example: false
  *                      light_color:
  *                          type: string
  *                          example: "K1000"
@@ -215,7 +215,7 @@ lightRouter.put('/:id', (req: Request, res: Response) => {
         const lightId: number = Number(req.params.id);
         const lightInput: LightInput = req.body;
 
-        const updatedLight = LightService.updateLight(lightId, lightInput.name, lightInput.time_on, lightInput.light_color);
+        const updatedLight = LightService.updateLight(lightId, lightInput.name, lightInput.light_on, lightInput.light_color);
         updatedLight.then(function (result) {
             res.status(200).json(result);
         });
@@ -241,9 +241,9 @@ lightRouter.put('/:id', (req: Request, res: Response) => {
  *                      name:
  *                          type: string
  *                          example: "LivingLamp"
- *                      time_on:
- *                          type: number
- *                          example: 5
+ *                      light_on:
+ *                          type: boolean
+ *                          example: false
  *                      light_color:
  *                          type: string
  *                          example: K1000
@@ -262,9 +262,9 @@ lightRouter.put('/:id', (req: Request, res: Response) => {
  *                 name:
  *                   type: string
  *                   example: "LivingLamp"
- *                 time_On:
- *                   type: number
- *                   example: 5
+ *                 light_on:
+ *                   type: boolean
+ *                   example: false
  *                 light_color:
  *                   type: string
  *                   example: K1000
@@ -280,10 +280,10 @@ lightRouter.post('/add', (req: Request, res: Response) => {
         const parseLight: LightInput = {
             id: lightInput.id,
             name: lightInput.name,
-            time_on: lightInput.time_on,
+            light_on: lightInput.light_on,
             light_color: lightInput.light_color
         };
-        const plantCreated = LightService.addLight(parseLight.name, parseLight.time_on, parseLight.light_color);
+        const plantCreated = LightService.addLight(parseLight.name, parseLight.light_on, parseLight.light_color);
         plantCreated.then(function (result) {
             res.status(200).json(result);
         });

@@ -1,6 +1,6 @@
 export interface LightInput {
     id: number;
     name: string;
-    time_on: number;
+    light_on: boolean;
     light_color: string;
 }
