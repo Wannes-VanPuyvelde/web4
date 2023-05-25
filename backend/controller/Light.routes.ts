@@ -22,7 +22,7 @@
 
 import express, { Request, Response } from 'express';
 import LightService from '../service/Light.service';
-import { LightInput } from '../types/LightInput';
+import { LightInput, LightBasicInput } from '../types/LightInput';
 
 const lightRouter = express.Router();
 /**
@@ -276,19 +276,98 @@ lightRouter.put('/:id', (req: Request, res: Response) => {
 
 lightRouter.post('/add', (req: Request, res: Response) => {
     try {
-        const lightInput: LightInput = req.body;
-        const parseLight: LightInput = {
+        const lightInput: LightBasicInput = req.body;
+        const parseLight: LightBasicInput = {
             id: lightInput.id,
             name: lightInput.name,
             light_on: lightInput.light_on,
             light_color: lightInput.light_color
         };
-        const plantCreated = LightService.addLight(parseLight.name, parseLight.light_on, parseLight.light_color);
-        plantCreated.then(function (result) {
+        const lightCreated = LightService.addLight(parseLight.name, parseLight.light_on, parseLight.light_color);
+        lightCreated.then(function (result) {
             res.status(200).json(result);
         });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /lights/{lightId}/plants/{plantId}:
+ *   post:
+ *     summary: Link a plant to a light
+ *     parameters:
+ *       - in: path
+ *         name: lightId
+ *         required: true
+ *         description: ID of the light
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: plantId
+ *         required: true
+ *         description: ID of the plant
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Plant successfully linked to the light.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Light'
+ *       500:
+ *         description: An error has occurred, see error message for more details.
+ */
+lightRouter.post('/:lightId/plants/:plantId', async (req: Request, res: Response) => {
+    try {
+        const lightId = parseInt(req.params.lightId);
+        const plantId = parseInt(req.params.plantId);
+        const light = await LightService.linkPlantToLight({lightId, plantId});
+        res.status(200).send(light);
+    } catch (error) {
+        res.status(500).json({ error: 'error', errorMessage: error.message });
+    }
+});
+
+// Unlink plant from light
+/**
+ * @swagger
+ * /lights/{lightId}/plants/{plantId}:
+ *   delete:
+ *     summary: Unlink a plant from a light
+ *     parameters:
+ *       - in: path
+ *         name: lightId
+ *         required: true
+ *         description: ID of the light
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: plantId
+ *         required: true
+ *         description: ID of the plant
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Plant successfully unlinked from the light.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Light'
+ *       500:
+ *         description: An error has occurred, see error message for more details.
+ */
+lightRouter.delete('/:lightId/plants/:plantId', async (req: Request, res: Response) => {
+    try {
+        const lightId = parseInt(req.params.lightId);
+        const plantId = parseInt(req.params.plantId);
+        const light = await LightService.unlinkPlantFromLight({lightId, plantId});
+        res.status(200).send(light);
+    } catch (error) {
+        res.status(500).json({ error: 'error', errorMessage: error.message });
     }
 });
 

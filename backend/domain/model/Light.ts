@@ -14,3 +14,8 @@ export class Light {
         return new Light(name, light_on, light_color);
     }
 }
+
+export type LightPlant = {
+    lightId: number;
+    plantId: number;
+};

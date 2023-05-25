@@ -1,4 +1,4 @@
-import { Light } from '../domain/model/Light';
+import { Light, LightPlant } from '../domain/model/Light';
 import LightDB from '../domain/data-access/Light.db';
 
 const getAllLights = async (): Promise<Light[]> => {
@@ -44,4 +44,14 @@ const addLight = async (name:string, light_on:boolean, light_color:string): Prom
     return light;
 };
 
-export default { getAllLights, getLightById, deleteLight, updateLight, addLight};
+const linkPlantToLight = async (lightPlant: LightPlant): Promise<Light> => {
+    const light = await LightDB.linkPlantToLight(lightPlant);
+    return light;
+};
+
+const unlinkPlantFromLight = async (lightPlant: LightPlant): Promise<Light> => {
+    const light = await LightDB.unlinkPlantFromLight(lightPlant);
+    return light;
+};
+
+export default { getAllLights, getLightById, deleteLight, updateLight, addLight, linkPlantToLight, unlinkPlantFromLight};

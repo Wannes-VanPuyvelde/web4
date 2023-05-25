@@ -4,28 +4,33 @@ import { plantMapper } from './Plant.mapper';
 
 const database = new PrismaClient();
 
-const plants: Plant[] = [Plant.create({ name: 'bloempje', description: 'Heel mooie bloem.' })];
-
 const getAllPlants = async (): Promise<Plant[]> => {
-    try {
-        const prismaPlants = await database.plant.findMany();
-        return prismaPlants.map(plantMapper);
-    } catch (error) {
-        throw new Error('Error getting plants from database');
-    }
+  try {
+      const prismaPlants = await database.plant.findMany({
+          include: {
+              lights: true,
+          },
+      });
+      return prismaPlants.map(plantMapper);
+  } catch (error) {
+      throw new Error('Error getting plants from database');
+  }
 };
 
 const getPlantById = async ({ id }: { id: number }): Promise<Plant> => {
-    try {
-        const prismaPlant = await database.plant.findUnique({
-            where: {
-                id: id,
-            },
-        });
-        return plantMapper(prismaPlant);
-    } catch (error) {
-        throw new Error('Error getting plant from database');
-    }
+  try {
+      const prismaPlant = await database.plant.findUnique({
+          where: {
+              id: id,
+          },
+          include: {
+              lights: true,
+          },
+      });
+      return plantMapper(prismaPlant);
+  } catch (error) {
+      throw new Error('Error getting plant from database');
+  }
 };
 
 const addPlant = async ({
@@ -62,16 +67,58 @@ const deletePlant = async ({ id }: { id: number }): Promise<Plant> => {
     }
 };
 
+
 const updatePlant = async ({ id, name, description }) => {
-    const prismaPlant = await database.plant.update({
-        where: { id },
-        data: {
-            id,
-            name,
-            description,
-        },
-    });
-    return plantMapper(prismaPlant);
+  const prismaPlant = await database.plant.update({
+      where: { id },
+      data: {
+          id,
+          name,
+          description,
+      },
+      include: {
+          lights: true,
+      },
+  });
+  return plantMapper(prismaPlant);
 };
 
-export default { getAllPlants, addPlant, getPlantById, deletePlant, updatePlant };
+const linkLightToPlant = async ({ plantId, lightId }: { plantId: number, lightId: number}): Promise<Plant> => {
+  try {
+    const prismaPlant = await database.plant.update({
+      where: { id: plantId },
+      data: {
+        lights: {
+          connect: { id: lightId },
+        },
+      },
+      include: {
+          lights: true,
+      },
+    });
+    return plantMapper(prismaPlant);
+  } catch (error) {
+    throw new Error('Error linking light to plant in database');
+  }
+};
+
+const unlinkLightFromPlant = async ({ plantId, lightId }: { plantId: number, lightId: number}): Promise<Plant> => {
+  try {
+    const prismaPlant = await database.plant.update({
+      where: { id: plantId },
+      data: {
+        lights: {
+          disconnect: { id: lightId },
+        },
+      },
+      include: {
+          lights: true,
+      },
+    });
+    return plantMapper(prismaPlant);
+  } catch (error) {
+    throw new Error('Error unlinking light from plant in database');
+  }
+};  
+
+export default { getAllPlants, addPlant, getPlantById, deletePlant, updatePlant, linkLightToPlant, unlinkLightFromPlant };

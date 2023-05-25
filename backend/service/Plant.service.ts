@@ -1,4 +1,4 @@
-import { Plant } from '../domain/model/Plant';
+import { Plant, PlantLight } from '../domain/model/Plant';
 import plantDB from '../domain/data-access/Plant.db';
 
 const getAllPlants = async (): Promise<Plant[]> => {
@@ -38,12 +38,20 @@ const updatePlant = async (id: number, name: string, description: string): Promi
     return plant;
 };
 
-
-
 const addPlant = async (name:string, description:string): Promise<Plant> => {
     const plant = await plantDB.addPlant({ name, description });
 
     return plant;
 };
 
-export default { getAllPlants, getPlantById, deletePlant, updatePlant, addPlant};
+const linkLightToPlant = async (plantLight: PlantLight): Promise<Plant> => {
+    const plant = await plantDB.linkLightToPlant(plantLight);
+    return plant;
+};
+
+const unlinkLightFromPlant = async (plantLight: PlantLight): Promise<Plant> => {
+    const plant = await plantDB.unlinkLightFromPlant(plantLight);
+    return plant;
+};
+
+export default { getAllPlants, getPlantById, deletePlant, updatePlant, addPlant, linkLightToPlant, unlinkLightFromPlant };

@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Layout from '../../app/layout';
 
+interface Plant {
+  id: number;
+  name: string;
+  description: string;
+}
+
 interface Light {
   id: number;
   name: string;
   light_on: boolean;
   light_color: string;
+  plants: Plant[];
 }
 
 const Lights = () => {
@@ -16,7 +23,6 @@ const Lights = () => {
     fetch('http://localhost:3000/lights')
       .then((response) => response.json())
       .then((data) => {
-        // Sort the lights by id
         const sortedData = data.sort((a: Light, b: Light) => a.id - b.id);
         setLights(sortedData);
       });
@@ -30,8 +36,9 @@ const Lights = () => {
           <tr>
             <th>ID</th>
             <th>Name</th>
-            <th>Light On</th>
+            <th>Status</th>
             <th>Light Color</th>
+            <th>Plants</th>
             <th>Edit</th>
             <th>Delete</th>
           </tr>
@@ -44,13 +51,18 @@ const Lights = () => {
               <td>{light.light_on ? 'On' : 'Off'}</td>
               <td>{light.light_color}</td>
               <td>
+                {light.plants.map((plant) => (
+                  <p key={plant.id}>{plant.name}</p>
+                ))}
+              </td>
+              <td>
                 <Link href={`/lights/edit?id=${light.id}`} as={`/lights/edit/${light.id}`}>
                   Edit
                 </Link>
               </td>
               <td>
                 <Link href={`/lights/delete?id=${light.id}`} as={`/lights/delete/${light.id}`}>
-                  X
+                  Delete
                 </Link>
               </td>
             </tr>

@@ -5,26 +5,32 @@ import { LightMapper } from "./Light.mapper";
 const database = new PrismaClient();
 
 const getAllLights = async (): Promise<Light[]> => {
-    try{
-        const prismaLight = await database.light.findMany();
-        return prismaLight.map(LightMapper);
-    }
-    catch(error){
-        throw new Error('Error getting lights from database')
-    }
+  try {
+      const prismaLight = await database.light.findMany({
+          include: {
+              plants: true,
+          },
+      });
+      return prismaLight.map(LightMapper);
+  } catch (error) {
+      throw new Error('Error getting lights from database');
+  }
 };
 
 const getLightById = async ({id}: {id:number}): Promise<Light> => {
-    try {
-        const prismaLight = await database.light.findUnique({
-            where: {
-                id: id,
-            },
-        });
-        return LightMapper(prismaLight);
-    } catch (error) {
-        throw new Error('Error getting Light from database');
-    }
+  try {
+      const prismaLight = await database.light.findUnique({
+          where: {
+              id: id,
+          },
+          include: {
+              plants: true,
+          },
+      });
+      return LightMapper(prismaLight);
+  } catch (error) {
+      throw new Error('Error getting Light from database');
+  }
 }
 
 const addLight = async ({
@@ -65,16 +71,57 @@ const deleteLight = async ({ id }: { id: number }): Promise<Light> => {
 };
 
 const updateLight = async ({ id, name, light_on, light_color }) => {
-    const prismaLight = await database.light.update({
-        where: { id },
-        data: {
-            id,
-            name,
-            light_on,
-            light_color,
-        },
-    });
-    return LightMapper(prismaLight);
+  const prismaLight = await database.light.update({
+      where: { id },
+      data: {
+          id,
+          name,
+          light_on,
+          light_color,
+      },
+      include: {
+          plants: true,
+      },
+  });
+  return LightMapper(prismaLight);
 };
 
-export default { getAllLights, addLight, getLightById, deleteLight, updateLight}
+const linkPlantToLight = async ({ lightId, plantId }: { lightId: number, plantId: number}): Promise<Light> => {
+    try {
+      const prismaLight = await database.light.update({
+        where: { id: lightId },
+        data: {
+          plants: {
+            connect: { id: plantId },
+          },
+        },
+        include: {
+          plants: true,
+        },
+      });
+      return LightMapper(prismaLight);
+    } catch (error) {
+      throw new Error('Error linking plant to light in database');
+    }
+  };
+
+const unlinkPlantFromLight = async ({ lightId, plantId }: { lightId: number, plantId: number}): Promise<Light> => {
+  try {
+    const prismaLight = await database.light.update({
+      where: { id: lightId },
+      data: {
+        plants: {
+          disconnect: { id: plantId },
+        },
+      },
+      include: {
+        plants: true,
+      },
+    });
+    return LightMapper(prismaLight);
+  } catch (error) {
+    throw new Error('Error unlinking plant from light in database');
+  }
+};  
+
+export default { getAllLights, addLight, getLightById, deleteLight, updateLight, linkPlantToLight, unlinkPlantFromLight };

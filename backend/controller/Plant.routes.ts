@@ -18,7 +18,7 @@
  */
 import express, { Request, Response } from 'express';
 import PlantService from '../service/Plant.service';
-import { PlantInput } from '../types/PlantInput';
+import { PlantInput, PlantBasicInput } from '../types/PlantInput';
 
 const plantRouter = express.Router();
 
@@ -255,8 +255,8 @@ plantRouter.put('/:id', (req: Request, res: Response) => {
 
 plantRouter.post('/add', (req: Request, res: Response) => {
     try {
-        const plantInput: PlantInput = req.body;
-        const parsePlant: PlantInput = {
+        const plantInput: PlantBasicInput = req.body;
+        const parsePlant: PlantBasicInput = {
             id: plantInput.id,
             name: plantInput.name,
             description: plantInput.description,
@@ -267,6 +267,78 @@ plantRouter.post('/add', (req: Request, res: Response) => {
         });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /plants/{plantId}/lights/{lightId}:
+ *   post:
+ *     summary: Link a light to a plant
+ *     parameters:
+ *       - in: path
+ *         name: plantId
+ *         required: true
+ *         description: ID of the plant
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: lightId
+ *         required: true
+ *         description: ID of the light
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Light successfully linked to plant.
+ *       500:
+ *         description: An error has occurred, see error message for more details.
+ */
+
+plantRouter.post('/:plantId/lights/:lightId', async (req: Request, res: Response) => {
+    try {
+        const plantId = parseInt(req.params.plantId);
+        const lightId = parseInt(req.params.lightId);
+        const plant = await PlantService.linkLightToPlant({ plantId, lightId });
+        res.status(200).send(plant);
+    } catch (error) {
+        res.status(500).json({ error: 'error', errorMessage: error.message });
+    }
+});
+
+/**
+ * @swagger
+ * /plants/{plantId}/lights/{lightId}:
+ *   delete:
+ *     summary: Unlink a light from a plant
+ *     parameters:
+ *       - in: path
+ *         name: plantId
+ *         required: true
+ *         description: ID of the plant
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: lightId
+ *         required: true
+ *         description: ID of the light
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Light successfully unlinked from plant.
+ *       500:
+ *         description: An error has occurred, see error message for more details.
+ */
+
+plantRouter.delete('/:plantId/lights/:lightId', async (req: Request, res: Response) => {
+    try {
+        const plantId = parseInt(req.params.plantId);
+        const lightId = parseInt(req.params.lightId);
+        const plant = await PlantService.unlinkLightFromPlant({ plantId, lightId });
+        res.status(200).send(plant);
+    } catch (error) {
+        res.status(500).json({ error: 'error', errorMessage: error.message });
     }
 });
 
