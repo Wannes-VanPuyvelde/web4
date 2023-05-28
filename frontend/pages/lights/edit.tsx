@@ -2,62 +2,88 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../app/layout';
 
+interface Plant {
+  id: number;
+  name: string;
+  description: string;
+}
+
 interface Light {
   id: number;
   name: string;
   light_on: boolean;
   light_color: string;
-}
-interface Plant {
-  id: number;
-  name: string;
-  description: string;
-  lights: Light[];
+  plants: Plant[];
 }
 
-const EditPlant = () => {
+const EditLight = () => {
   const router = useRouter();
   const { id } = router.query;
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [lights, setLights] = useState<Light[]>([]);
-  const [allLights, setAllLights] = useState<Light[]>([]);
+  const [light_on, setLightOn] = useState(false);
+  const [light_color, setLightColor] = useState('');
+  const [plants, setPlants] = useState<Plant[]>([]);
+  const [allPlants, setAllPlants] = useState<Plant[]>([]);
+  const [errors, setErrors] = useState<Partial<Light>>({});
   const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
 
   useEffect(() => {
     if (!token) {
-      router.push('/'); 
+      router.push('/');
     }
   }, [token, router]);
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3000/plants/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        }
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setName(data.name);
-          setDescription(data.description);
-          setLights(data.lights);
-        });
-
-        fetch(`http://localhost:3000/lights`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
+      const fetchLightData = async () => {
+        try {
+          const responseLight = await fetch(`http://localhost:3000/lights/${id}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          const responsePlants = await fetch(`http://localhost:3000/plants`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          if (!responseLight.ok || !responsePlants.ok) {
+            throw new Error('Failed to fetch light or plant data');
           }
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          setAllLights(data);
-        });
+          const dataLight = await responseLight.json();
+          const dataPlants = await responsePlants.json();
+          setName(dataLight.name);
+          setLightOn(dataLight.light_on);
+          setLightColor(dataLight.light_color);
+          setPlants(dataLight.plants);
+          setAllPlants(dataPlants);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      fetchLightData();
     }
   }, [id, token]);
 
-  const linkLight = async (lightId: number) => {
-    await fetch(`http://localhost:3000/plants/${id}/lights/${lightId}`, {
+  const validateForm = () => {
+    const validationErrors: Partial<Light> = {};
+
+    if (name.trim() === '') {
+      validationErrors.name = 'Name is required';
+    }
+
+    if (light_color.trim() === '') {
+      validationErrors.light_color = 'Light Color is required';
+    }
+
+    setErrors(validationErrors);
+
+    return Object.keys(validationErrors).length === 0;
+  };
+
+  const linkPlant = async (plantId: number) => {
+    await fetch(`http://localhost:3000/lights/${id}/plants/${plantId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -66,8 +92,8 @@ const EditPlant = () => {
     });
   };
 
-  const unlinkLight = async (lightId: number) => {
-    await fetch(`http://localhost:3000/plants/${id}/lights/${lightId}`, {
+  const unlinkPlant = async (plantId: number) => {
+    await fetch(`http://localhost:3000/lights/${id}/plants/${plantId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -78,16 +104,19 @@ const EditPlant = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await fetch(`http://localhost:3000/plants/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ name, description }),
-    });
 
-    router.push('/plants');
+    if (validateForm()) {
+      await fetch(`http://localhost:3000/lights/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name, light_on, light_color }),
+      });
+
+      router.push('/lights');
+    }
   };
 
   return (
@@ -148,3 +177,4 @@ const EditPlant = () => {
 };
 
 export default EditLight;
+

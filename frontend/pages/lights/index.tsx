@@ -20,26 +20,45 @@ interface Light {
 const Lights = () => {
   const router = useRouter();
   const [lights, setLights] = useState<Light[]>([]);
+  const [error, setError] = useState('');
   const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
 
   useEffect(() => {
     if (!token) {
-      router.push('/'); 
+      router.push('/');
     }
   }, [token, router]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/lights', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchLights = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/lights', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch lights');
+        }
+        const data = await response.json();
         const sortedData = data.sort((a: Light, b: Light) => a.id - b.id);
         setLights(sortedData);
-      });
-  }, []);
+      } catch (error) {
+        //setError(error.message);
+      }
+    };
+
+    fetchLights();
+  }, [token]);
+
+  if (error) {
+    return (
+      <Layout>
+        <h1>Error</h1>
+        <p>{error}</p>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

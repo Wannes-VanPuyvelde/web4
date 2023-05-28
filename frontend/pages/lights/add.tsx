@@ -2,10 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../app/layout';
 
+interface Errors {
+  name?: string;
+  light_color?: string;
+}
+
 const AddLight = () => {
   const [name, setName] = useState('');
   const [light_on, setLightOn] = useState(false);
   const [light_color, setLightColor] = useState('');
+  const [errors, setErrors] = useState<Errors>({});
   const router = useRouter();
   const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
 
@@ -15,18 +21,37 @@ const AddLight = () => {
     }
   }, [token, router]);
 
+  const validateForm = () => {
+    const validationErrors: Errors = {};
+
+    if (name.trim() === '') {
+      validationErrors.name = 'Name is required';
+    }
+
+    if (light_color.trim() === '') {
+      validationErrors.light_color = 'Light color is required';
+    }
+
+    setErrors(validationErrors);
+
+    return Object.keys(validationErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await fetch('http://localhost:3000/lights/add', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({ name, light_on, light_color }),
-    });
 
-    router.push('/lights');
+    if (validateForm()) {
+      await fetch('http://localhost:3000/lights/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name, light_on, light_color }),
+      });
+
+      router.push('/lights');
+    }
   };
 
   return (

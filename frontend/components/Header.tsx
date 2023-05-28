@@ -35,6 +35,16 @@ const Header = () => {
                 Add Light
               </Link>
             </li>
+            <li className="mr-4">
+          <Link href="/locations">
+            Location Overview
+          </Link>
+        </li>
+        <li className="mr-4">
+          <Link href="/locations/add">
+            Add Location
+          </Link>
+        </li>
           </>
         )}
       </ul>

@@ -28,6 +28,7 @@ const WelcomePage = () => {
           <button onClick={logout}>Logout</button>
         </>
       )}
+
     </Layout>
   );
 };

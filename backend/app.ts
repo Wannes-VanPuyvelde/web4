@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 import { plantRouter } from './controller/Plant.routes';
 import { lightRouter } from './controller/Light.routes';
 import { userRouter } from './controller/User.routes';
+import { locationRouter } from './controller/Location.routes'
 
 const app = express();
 const port = process.env.APP_PORT || 3000;
@@ -42,6 +43,8 @@ const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use('/plants', plantRouter);
 app.use('/lights', lightRouter);
 app.use('/user', userRouter);
+app.use('/locations', locationRouter);
+
 
 app.get('/status', (req, res) => {
   res.json({ message: 'Back-end is running...' });
