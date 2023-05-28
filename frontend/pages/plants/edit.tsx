@@ -8,11 +8,16 @@ interface Light {
   light_on: boolean;
   light_color: string;
 }
+
 interface Plant {
   id: number;
   name: string;
   description: string;
   lights: Light[];
+}
+
+interface Errors {
+  name?: string;
 }
 
 const EditPlant = () => {
@@ -22,6 +27,7 @@ const EditPlant = () => {
   const [description, setDescription] = useState('');
   const [lights, setLights] = useState<Light[]>([]);
   const [allLights, setAllLights] = useState<Light[]>([]);
+  const [errors, setErrors] = useState<Errors>({});
 
   useEffect(() => {
     if (id) {
@@ -59,17 +65,32 @@ const EditPlant = () => {
     });
   };
 
+  const validateForm = () => {
+    const validationErrors: Errors = {};
+
+    if (name.trim() === '') {
+      validationErrors.name = 'Name is required';
+    }
+
+    setErrors(validationErrors);
+
+    return Object.keys(validationErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await fetch(`http://localhost:3000/plants/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, description }),
-    });
 
-    router.push('/plants');
+    if (validateForm()) {
+      await fetch(`http://localhost:3000/plants/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, description }),
+      });
+
+      router.push('/plants');
+    }
   };
 
   return (
@@ -78,11 +99,13 @@ const EditPlant = () => {
       <form onSubmit={handleSubmit}>
         <label>
           Name:
+          <span className="required">*</span>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
+          {errors.name && <span className="error">{errors.name}</span>}
         </label>
         <br />
         <label>

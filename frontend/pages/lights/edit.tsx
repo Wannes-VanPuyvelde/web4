@@ -24,6 +24,7 @@ const EditLight = () => {
   const [light_color, setLightColor] = useState('');
   const [plants, setPlants] = useState<Plant[]>([]);
   const [allPlants, setAllPlants] = useState<Plant[]>([]);
+  const [errors, setErrors] = useState<Partial<Light>>({});
 
   useEffect(() => {
     if (id) {
@@ -43,6 +44,22 @@ const EditLight = () => {
         });
     }
   }, [id]);
+
+  const validateForm = () => {
+    const validationErrors: Partial<Light> = {};
+
+    if (name.trim() === '') {
+      validationErrors.name = 'Name is required';
+    }
+
+    if (light_color.trim() === '') {
+      validationErrors.light_color = 'Light Color is required';
+    }
+
+    setErrors(validationErrors);
+
+    return Object.keys(validationErrors).length === 0;
+  };
 
   const linkPlant = async (plantId: number) => {
     await fetch(`http://localhost:3000/lights/${id}/plants/${plantId}`, {
@@ -64,15 +81,18 @@ const EditLight = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await fetch(`http://localhost:3000/lights/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, light_on, light_color }),
-    });
 
-    router.push('/lights');
+    if (validateForm()) {
+      await fetch(`http://localhost:3000/lights/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, light_on, light_color }),
+      });
+
+      router.push('/lights');
+    }
   };
 
   return (
@@ -81,11 +101,14 @@ const EditLight = () => {
       <form onSubmit={handleSubmit}>
         <label>
           Name:
+          <span className="required">*</span>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
           />
+          {errors.name && <span className="error">{errors.name}</span>}
         </label>
         <br />
         <label>
@@ -99,11 +122,16 @@ const EditLight = () => {
         <br />
         <label>
           Light Color:
+          <span className="required">*</span>
           <input
             type="text"
             value={light_color}
             onChange={(e) => setLightColor(e.target.value)}
+            required
           />
+          {errors.light_color && (
+            <span className="error">{errors.light_color}</span>
+          )}
         </label>
         <br />
         {plants.map((plant) => (
@@ -127,6 +155,7 @@ const EditLight = () => {
         </label>
         <br />
         <button type="submit">Update Light</button>
+
       </form>
     </Layout>
   );

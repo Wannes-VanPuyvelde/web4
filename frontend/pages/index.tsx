@@ -5,6 +5,7 @@ const WelcomePage = () => {
   return (
     <Layout>
         <h1>Welcome to the Plant Manager</h1>
+        
     </Layout>
   );
 };

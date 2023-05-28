@@ -2,22 +2,42 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../app/layout';
 
+interface Errors {
+  name?: string;
+}
+
 const AddPlant = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [errors, setErrors] = useState<Errors>({});
   const router = useRouter();
+
+  const validateForm = () => {
+    const validationErrors: Errors = {};
+
+    if (name.trim() === '') {
+      validationErrors.name = 'Name is required';
+    }
+
+    setErrors(validationErrors);
+
+    return Object.keys(validationErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await fetch('http://localhost:3000/plants/add', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, description }),
-    });
 
-    router.push('/plants');
+    if (validateForm()) {
+      await fetch('http://localhost:3000/plants/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, description }),
+      });
+
+      router.push('/plants');
+    }
   };
 
   return (
@@ -26,11 +46,14 @@ const AddPlant = () => {
       <form onSubmit={handleSubmit}>
         <label>
           Name:
+          <span className="required">*</span>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
           />
+          {errors.name && <span className="error">{errors.name}</span>}
         </label>
         <br />
         <label>

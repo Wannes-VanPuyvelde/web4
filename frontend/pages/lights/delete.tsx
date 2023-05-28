@@ -13,6 +13,7 @@ const DeleteLight = () => {
   const router = useRouter();
   const { id } = router.query;
   const [name, setName] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (id) {
@@ -23,11 +24,15 @@ const DeleteLight = () => {
   }, [id]);
 
   const handleDelete = async () => {
-    await fetch(`http://localhost:3000/lights/${id}`, {
-      method: 'DELETE',
-    });
+    try {
+      await fetch(`http://localhost:3000/lights/${id}`, {
+        method: 'DELETE',
+      });
 
-    router.push('/lights');
+      router.push('/lights');
+    } catch (error) {
+      setError('Failed to delete the light');
+    }
   };
 
   return (
@@ -37,6 +42,7 @@ const DeleteLight = () => {
         Are you sure you want to delete the light named&nbsp;
         {`"${name}"`}
       </p>
+      {error && <span className="error">{error}</span>}
       <button onClick={handleDelete}>Yes, delete</button>
       <button onClick={() => router.push('/lights')}>No, go back</button>
     </Layout>

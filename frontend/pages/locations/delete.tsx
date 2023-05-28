@@ -3,18 +3,19 @@ import { useRouter } from 'next/router';
 import Layout from '../../app/layout';
 
 interface Location {
-    id: number;
-    name: string;
-    description: string;
-    street: string;
-    number: number;
-    town: string;
-  }
+  id: number;
+  name: string;
+  description: string;
+  street: string;
+  number: number;
+  town: string;
+}
 
 const DeleteLocation = () => {
   const router = useRouter();
   const { id } = router.query;
   const [name, setName] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (id) {
@@ -25,11 +26,15 @@ const DeleteLocation = () => {
   }, [id]);
 
   const handleDelete = async () => {
-    await fetch(`http://localhost:3000/locations/${id}`, {
-      method: 'DELETE',
-    });
+    try {
+      await fetch(`http://localhost:3000/locations/${id}`, {
+        method: 'DELETE',
+      });
 
-    router.push('/locations');
+      router.push('/locations');
+    } catch (error) {
+      setError('Failed to delete the location');
+    }
   };
 
   return (
@@ -37,10 +42,11 @@ const DeleteLocation = () => {
       <h1>Delete Location</h1>
       <p>
         Are you sure you want to delete the location named&nbsp;
-        {`"${name}"`} {/* Add backticks (`) around the quotation marks */}
+        {`"${name}"`}
       </p>
+      {error && <span className="error">{error}</span>}
       <button onClick={handleDelete}>Yes, delete</button>
-      <button onClick={() => router.push('/plants')}>No, go back</button>
+      <button onClick={() => router.push('/locations')}>No, go back</button>
     </Layout>
   );
 };

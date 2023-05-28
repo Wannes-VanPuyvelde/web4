@@ -18,15 +18,33 @@ interface Light {
 
 const Lights = () => {
   const [lights, setLights] = useState<Light[]>([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:3000/lights')
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch lights');
+        }
+        return response.json();
+      })
       .then((data) => {
         const sortedData = data.sort((a: Light, b: Light) => a.id - b.id);
         setLights(sortedData);
+      })
+      .catch((error) => {
+        setError(error.message);
       });
   }, []);
+
+  if (error) {
+    return (
+      <Layout>
+        <h1>Error</h1>
+        <p>{error}</p>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
