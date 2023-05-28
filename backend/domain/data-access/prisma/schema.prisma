@@ -34,3 +34,12 @@ model Light {
   User        User?   @relation(fields: [userId], references: [id])
   userId      Int?
 }
+
+model Location {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String
+  street      String
+  number      Int
+  town        String
+}

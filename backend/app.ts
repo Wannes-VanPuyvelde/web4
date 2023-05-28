@@ -6,6 +6,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { plantRouter } from './controller/Plant.routes';
 import { lightRouter } from './controller/Light.routes';
+import { locationRouter } from './controller/Location.routes'
 
 const app = express();
 dotenv.config();
@@ -28,6 +29,7 @@ app.use(bodyParser.json());
 
 app.use('/plants', plantRouter);
 app.use('/lights', lightRouter);
+app.use('/locations', locationRouter);
 
 app.get('/status', (req, res) => {
     res.json({ message: 'Back-end is running...' });
