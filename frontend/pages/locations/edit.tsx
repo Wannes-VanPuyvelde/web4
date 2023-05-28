@@ -20,10 +20,21 @@ const EditLocation = () => {
   const [number, setNumber] = useState('');
   const [town, setTown] = useState('');
   const [errors, setErrors] = useState<Partial<Location>>({});
+  const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
+  
+  useEffect(() => {
+    if (!token) {
+      router.push('/');
+    }
+  }, [token, router]);
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3000/locations/${id}`)
+      fetch(`http://localhost:3000/locations/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      })
         .then((response) => response.json())
         .then((data) => {
           setName(data.name);
@@ -33,7 +44,7 @@ const EditLocation = () => {
           setTown(data.town);
         });
     }
-  }, [id]);
+  }, [id, token]);
 
   const validateForm = () => {
     const validationErrors: Partial<Location> = {};
@@ -64,6 +75,7 @@ const EditLocation = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ name, description, street, number: numberValue, town }),
       });

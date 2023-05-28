@@ -16,19 +16,33 @@ const DeleteLocation = () => {
   const { id } = router.query;
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
+
+  useEffect(() => {
+    if (!token) {
+      router.push('/');
+    }
+  }, [token, router]);
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3000/locations/${id}`)
+      fetch(`http://localhost:3000/locations/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      })
         .then((response) => response.json())
         .then((data) => setName(data.name));
     }
-  }, [id]);
+  }, [id, token]);
 
   const handleDelete = async () => {
     try {
       await fetch(`http://localhost:3000/locations/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       });
 
       router.push('/locations');

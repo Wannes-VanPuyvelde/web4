@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../app/layout';
 
-interface Errors {
-  name?: string;
-  street?: string;
-  number?: string;
-  town?: string;
+interface Location {
+  id: number;
+  name: string;
+  description: string;
+  street: string;
+  number: number;
+  town: string;
 }
 
 const AddLocation = () => {
@@ -15,27 +17,31 @@ const AddLocation = () => {
   const [street, setStreet] = useState('');
   const [number, setNumber] = useState('');
   const [town, setTown] = useState('');
-  const [errors, setErrors] = useState<Errors>({});
+  const [errors, setErrors] = useState<Partial<Location>>({});
 
   const router = useRouter();
+  const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
+
+  useEffect(() => {
+    if (!token) {
+      router.push('/');
+    }
+  }, [token, router]);
+
 
   const validateForm = () => {
-    const validationErrors: Errors = {};
+    const validationErrors: Partial<Location> = {};
 
-    if (name.trim() === '') {
-      validationErrors.name = 'Please enter a name';
+    if (!name.trim()) {
+      validationErrors.name = 'Name is required';
     }
 
-    if (street.trim() === '') {
-      validationErrors.street = 'Please enter a street';
+    if (!street.trim()) {
+      validationErrors.street = 'Street is required';
     }
 
-    if (number.trim() === '' || parseInt(number) <= 0) {
-      validationErrors.number = 'Please enter a valid number';
-    }
-
-    if (town.trim() === '') {
-      validationErrors.town = 'Please enter a town';
+    if (!town.trim()) {
+      validationErrors.town = 'Town is required';
     }
 
     setErrors(validationErrors);
@@ -45,13 +51,14 @@ const AddLocation = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const numberValue = parseInt(number); // Parse the number value as an integer
 
     if (validateForm()) {
-      const numberValue = parseInt(number);
       await fetch('http://localhost:3000/locations/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ name, description, street, number: numberValue, town }),
       });
@@ -66,7 +73,6 @@ const AddLocation = () => {
       <form onSubmit={handleSubmit}>
         <label>
           Name:
-          <span className="required">*</span>
           <input
             type="text"
             value={name}
@@ -86,7 +92,6 @@ const AddLocation = () => {
         <br />
         <label>
           Street:
-          <span className="required">*</span>
           <input
             type="text"
             value={street}
@@ -97,9 +102,8 @@ const AddLocation = () => {
         <br />
         <label>
           Number:
-          <span className="required">*</span>
           <input
-            type="number"
+            type="text"
             value={number}
             onChange={(e) => setNumber(e.target.value)}
           />
@@ -108,7 +112,6 @@ const AddLocation = () => {
         <br />
         <label>
           Town:
-          <span className="required">*</span>
           <input
             type="text"
             value={town}
@@ -118,7 +121,6 @@ const AddLocation = () => {
         </label>
         <br />
         <button type="submit">Add Location</button>
-
       </form>
     </Layout>
   );

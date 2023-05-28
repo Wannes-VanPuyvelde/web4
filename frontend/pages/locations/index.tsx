@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Layout from '../../app/layout';
+import { useRouter } from 'next/router';
 
 interface Location {
   id: number;
@@ -12,17 +13,29 @@ interface Location {
 }
 
 const Locations = () => {
+  const router = useRouter();
   const [locations, setLocations] = useState<Location[]>([]);
+  const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
 
   useEffect(() => {
-    fetch('http://localhost:3000/locations')
+    if (!token) {
+      router.push('/');
+    }
+  }, [token, router]);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/locations', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    })
       .then((response) => response.json())
       .then((data) => {
         // Sort the locations by id
         const sortedData = data.sort((a: Location, b: Location) => a.id - b.id);
         setLocations(sortedData);
       });
-    }, []);
+  }, [token]);
 
 return (
   <Layout>
