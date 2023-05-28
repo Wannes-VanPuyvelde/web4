@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../../app/layout';
 
@@ -17,10 +18,22 @@ interface Light {
 }
 
 const Lights = () => {
+  const router = useRouter();
   const [lights, setLights] = useState<Light[]>([]);
+  const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
 
   useEffect(() => {
-    fetch('http://localhost:3000/lights')
+    if (!token) {
+      router.push('/'); 
+    }
+  }, [token, router]);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/lights', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         const sortedData = data.sort((a: Light, b: Light) => a.id - b.id);

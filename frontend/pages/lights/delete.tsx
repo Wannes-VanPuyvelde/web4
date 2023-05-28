@@ -13,10 +13,21 @@ const DeleteLight = () => {
   const router = useRouter();
   const { id } = router.query;
   const [name, setName] = useState('');
+  const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
+
+  useEffect(() => {
+    if (!token) {
+      router.push('/'); 
+    }
+  }, [token, router]);
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3000/lights/${id}`)
+      fetch(`http://localhost:3000/lights/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
         .then((response) => response.json())
         .then((data) => setName(data.name));
     }
@@ -25,6 +36,9 @@ const DeleteLight = () => {
   const handleDelete = async () => {
     await fetch(`http://localhost:3000/lights/${id}`, {
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
     });
 
     router.push('/lights');

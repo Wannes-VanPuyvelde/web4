@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../app/layout';
 
 interface Light {
@@ -16,10 +17,23 @@ interface Plant {
 }
 
 const Plants = () => {
+  const router = useRouter();
   const [plants, setPlants] = useState<Plant[]>([]);
+  const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
 
   useEffect(() => {
-    fetch('http://localhost:3000/plants')
+    if (!token) {
+      router.push('/'); 
+    }
+  }, [token, router]);
+
+  useEffect(() => {
+    
+    fetch('http://localhost:3000/plants', {
+      headers: {
+        'Authorization': `Bearer ${token}`, // where `token` is your JWT
+      }
+    })
       .then((response) => response.json())
       .then((data) => {
         // Sort the plants by id

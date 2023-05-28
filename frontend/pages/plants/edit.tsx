@@ -22,10 +22,21 @@ const EditPlant = () => {
   const [description, setDescription] = useState('');
   const [lights, setLights] = useState<Light[]>([]);
   const [allLights, setAllLights] = useState<Light[]>([]);
+  const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
+
+  useEffect(() => {
+    if (!token) {
+      router.push('/'); 
+    }
+  }, [token, router]);
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3000/plants/${id}`)
+      fetch(`http://localhost:3000/plants/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      })
         .then((response) => response.json())
         .then((data) => {
           setName(data.name);
@@ -33,19 +44,24 @@ const EditPlant = () => {
           setLights(data.lights);
         });
 
-      fetch(`http://localhost:3000/lights`)
+        fetch(`http://localhost:3000/lights`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        })
         .then((response) => response.json())
         .then((data) => {
           setAllLights(data);
         });
     }
-  }, [id]);
+  }, [id, token]);
 
   const linkLight = async (lightId: number) => {
     await fetch(`http://localhost:3000/plants/${id}/lights/${lightId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
     });
   };
@@ -55,6 +71,7 @@ const EditPlant = () => {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
     });
   };
@@ -65,6 +82,7 @@ const EditPlant = () => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ name, description }),
     });

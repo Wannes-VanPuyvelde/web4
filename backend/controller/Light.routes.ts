@@ -23,8 +23,11 @@
 import express, { Request, Response } from 'express';
 import LightService from '../service/Light.service';
 import { LightInput, LightBasicInput } from '../types/LightInput';
+import jwtMiddleware from './authMiddleware';
 
 const lightRouter = express.Router();
+lightRouter.use(jwtMiddleware);
+
 /**
  * @swagger
  * /lights/{id}:

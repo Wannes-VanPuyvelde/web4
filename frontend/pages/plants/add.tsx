@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../app/layout';
 
@@ -6,13 +6,23 @@ const AddPlant = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const router = useRouter();
+  const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
+
+  useEffect(() => {
+    if (!token) {
+      router.push('/'); 
+    }
+
+  }, [token, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
     await fetch('http://localhost:3000/plants/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ name, description }),
     });

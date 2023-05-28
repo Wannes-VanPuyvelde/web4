@@ -1,4 +1,4 @@
-class Account {
+export class User {
     id: number;
     username: string;
     email: string;
@@ -10,7 +10,7 @@ class Account {
         this.password = password;
     }
     
-    static create({ username, email, password }: Account): Account {
-        return new Account(username, email, password);
+    static create({ username, email, password }: User): User {
+        return new User(username, email, password);
     }
 }

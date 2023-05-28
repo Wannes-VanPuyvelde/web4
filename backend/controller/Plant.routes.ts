@@ -16,9 +16,11 @@
  *              description: Plant description.
  *
  */
-import express, { Request, Response } from 'express';
+import express from 'express';
+import { Request, Response } from 'express';
 import PlantService from '../service/Plant.service';
 import { PlantInput, PlantBasicInput } from '../types/PlantInput';
+import jwtMiddleware from './authMiddleware';
 
 const plantRouter = express.Router();
 
@@ -26,45 +28,47 @@ const plantRouter = express.Router();
  * @swagger
  * /plants/{id}:
  *   get:
- *      summary: Get a plant by ID
- *      parameters:
- *        - name: id
- *          in: path
- *          description: Plant ID
- *          required: true
- *          schema:
- *            type: integer
- *            format: int64
- *      responses:
- *          200:
- *            description: Returns a plant. If the plant does not exist, an error is returned.
- *            content:
- *               application/json:
- *                   schema:
- *                       type: object
- *                       properties:
- *                           id:
- *                               type: integer
- *                               example: 1
- *                           name:
- *                               type: string
- *                               example: Rose
- *                           description:
- *                               type: string
- *                               example: A beautiful flower
- *          404:
- *            description: Plant not found.
- *          500:
- *            description: An error has occurred, see error message for more details.
+ *     summary: Get a plant by ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: Plant ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           format: int64
+ *     responses:
+ *       200:
+ *         description: Returns a plant. If the plant does not exist, an error is returned.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: Rose
+ *                 description:
+ *                   type: string
+ *                   example: A beautiful flower
+ *       404:
+ *         description: Plant not found.
+ *       500:
+ *         description: An error has occurred, see error message for more details.
  */
-plantRouter.get('/:id', async (req: Request, res: Response) => {
-    try {
-        const id = parseInt(req.params.id);
-        const plants = await PlantService.getPlantById(id);
-        res.status(200).send(plants);
-    } catch (error) {
-        res.status(500).json({ error: 'error', errorMessage: error.message });
-    }
+plantRouter.get('/:id', jwtMiddleware, async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const plants = await PlantService.getPlantById(id);
+    res.status(200).send(plants);
+  } catch (error) {
+    res.status(500).json({ error: 'error', errorMessage: error.message });
+  }
 });
 
 /**
@@ -72,6 +76,8 @@ plantRouter.get('/:id', async (req: Request, res: Response) => {
  * /plants/{id}:
  *   delete:
  *      summary: Delete a plant by ID
+ *      security:
+ *       - bearerAuth: []
  *      parameters:
  *        - name: id
  *          in: path
@@ -108,7 +114,7 @@ plantRouter.get('/:id', async (req: Request, res: Response) => {
  *          500:
  *            description: An error has occurred, see error message for more details.
  */
-plantRouter.delete('/:id', async (req: Request, res: Response) => {
+plantRouter.delete('/:id', jwtMiddleware, async (req: Request, res: Response) => {
     try {
         const id = parseInt(req.params.id);
         const plants = await PlantService.deletePlant(id);
@@ -123,6 +129,8 @@ plantRouter.delete('/:id', async (req: Request, res: Response) => {
  * /plants:
  *   get:
  *     summary: Get all plants
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Returns all plants.
@@ -148,7 +156,7 @@ plantRouter.delete('/:id', async (req: Request, res: Response) => {
  *         description: An error has occurred, see error message for more details.
  */
 
-plantRouter.get('/', async (req: Request, res: Response) => {
+plantRouter.get('/', jwtMiddleware, async (req: Request, res: Response) => {
     try {
         const plants = await PlantService.getAllPlants();
         res.status(200).send(plants);
@@ -162,6 +170,8 @@ plantRouter.get('/', async (req: Request, res: Response) => {
  * /plants/{id}:
  *   put:
  *     summary: Update a plant
+ *     security:
+ *       - bearerAuth: [] 
  *     parameters:
  *       - in: path
  *         name: id
@@ -195,7 +205,7 @@ plantRouter.get('/', async (req: Request, res: Response) => {
  *         description: An error has occurred, see error message for more details.
  */
 
-plantRouter.put('/:id', (req: Request, res: Response) => {
+plantRouter.put('/:id', jwtMiddleware, (req: Request, res: Response) => {
     try {
         const plantId: number = Number(req.params.id);
         const plantInput: PlantInput = req.body;
@@ -216,6 +226,8 @@ plantRouter.put('/:id', (req: Request, res: Response) => {
  * /plants/add:
  *   post:
  *     summary: Add a new plant
+ *     security:
+ *       - bearerAuth: [] 
  *     requestBody:
  *       required: true
  *       content:
@@ -253,7 +265,7 @@ plantRouter.put('/:id', (req: Request, res: Response) => {
  *         description: An error has occurred, see error message for more details.
  */
 
-plantRouter.post('/add', (req: Request, res: Response) => {
+plantRouter.post('/add', jwtMiddleware, (req: Request, res: Response) => {
     try {
         const plantInput: PlantBasicInput = req.body;
         const parsePlant: PlantBasicInput = {
@@ -275,6 +287,8 @@ plantRouter.post('/add', (req: Request, res: Response) => {
  * /plants/{plantId}/lights/{lightId}:
  *   post:
  *     summary: Link a light to a plant
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: plantId
@@ -295,7 +309,7 @@ plantRouter.post('/add', (req: Request, res: Response) => {
  *         description: An error has occurred, see error message for more details.
  */
 
-plantRouter.post('/:plantId/lights/:lightId', async (req: Request, res: Response) => {
+plantRouter.post('/:plantId/lights/:lightId', jwtMiddleware, async (req: Request, res: Response) => {
     try {
         const plantId = parseInt(req.params.plantId);
         const lightId = parseInt(req.params.lightId);
@@ -311,6 +325,8 @@ plantRouter.post('/:plantId/lights/:lightId', async (req: Request, res: Response
  * /plants/{plantId}/lights/{lightId}:
  *   delete:
  *     summary: Unlink a light from a plant
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: plantId
@@ -331,7 +347,7 @@ plantRouter.post('/:plantId/lights/:lightId', async (req: Request, res: Response
  *         description: An error has occurred, see error message for more details.
  */
 
-plantRouter.delete('/:plantId/lights/:lightId', async (req: Request, res: Response) => {
+plantRouter.delete('/:plantId/lights/:lightId', jwtMiddleware, async (req: Request, res: Response) => {
     try {
         const plantId = parseInt(req.params.plantId);
         const lightId = parseInt(req.params.lightId);

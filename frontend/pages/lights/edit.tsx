@@ -2,77 +2,92 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../app/layout';
 
-interface Plant {
-  id: number;
-  name: string;
-  description: string;
-}
-
 interface Light {
   id: number;
   name: string;
   light_on: boolean;
   light_color: string;
-  plants: Plant[];
+}
+interface Plant {
+  id: number;
+  name: string;
+  description: string;
+  lights: Light[];
 }
 
-const EditLight = () => {
+const EditPlant = () => {
   const router = useRouter();
   const { id } = router.query;
   const [name, setName] = useState('');
-  const [light_on, setLightOn] = useState(false);
-  const [light_color, setLightColor] = useState('');
-  const [plants, setPlants] = useState<Plant[]>([]);
-  const [allPlants, setAllPlants] = useState<Plant[]>([]);
+  const [description, setDescription] = useState('');
+  const [lights, setLights] = useState<Light[]>([]);
+  const [allLights, setAllLights] = useState<Light[]>([]);
+  const token = typeof window !== 'undefined' ? window.sessionStorage.getItem('jwtToken') : '';
+
+  useEffect(() => {
+    if (!token) {
+      router.push('/'); 
+    }
+  }, [token, router]);
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3000/lights/${id}`)
+      fetch(`http://localhost:3000/plants/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      })
         .then((response) => response.json())
         .then((data) => {
           setName(data.name);
-          setLightOn(data.light_on);
-          setLightColor(data.light_color);
-          setPlants(data.plants);
+          setDescription(data.description);
+          setLights(data.lights);
         });
 
-      fetch(`http://localhost:3000/plants`)
+        fetch(`http://localhost:3000/lights`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        })
         .then((response) => response.json())
         .then((data) => {
-          setAllPlants(data);
+          setAllLights(data);
         });
     }
-  }, [id]);
+  }, [id, token]);
 
-  const linkPlant = async (plantId: number) => {
-    await fetch(`http://localhost:3000/lights/${id}/plants/${plantId}`, {
+  const linkLight = async (lightId: number) => {
+    await fetch(`http://localhost:3000/plants/${id}/lights/${lightId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
     });
   };
 
-  const unlinkPlant = async (plantId: number) => {
-    await fetch(`http://localhost:3000/lights/${id}/plants/${plantId}`, {
+  const unlinkLight = async (lightId: number) => {
+    await fetch(`http://localhost:3000/plants/${id}/lights/${lightId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
     });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await fetch(`http://localhost:3000/lights/${id}`, {
+    await fetch(`http://localhost:3000/plants/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ name, light_on, light_color }),
+      body: JSON.stringify({ name, description }),
     });
 
-    router.push('/lights');
+    router.push('/plants');
   };
 
   return (
