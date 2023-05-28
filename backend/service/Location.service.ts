@@ -23,13 +23,17 @@ const getLocationById = async (id: number): Promise<Location> => {
 
 const deleteLocation = async (id: number): Promise<Location> => {
     if (Number.isNaN(Number(id))) throw new Error('Id must be a number');
-
-    const location = await locationDB.deleteLocation({ id });
-
+  
+    const location = await locationDB.getLocationById({ id });
+  
     if (!location) throw new Error('Location not found');
+  
+    const deletedLocation = await locationDB.deleteLocation({ id });
+  
+    return deletedLocation;
+  };
+  
 
-    return location;
-};
 
 const updateLocation = async (id: number, name: string, description: string, street: string, number: number, town: string): Promise<Location> => {
     if (Number.isNaN(Number(id))) throw new Error('Id must be a number');
@@ -45,4 +49,15 @@ const addLocation = async (name: string, description: string, street: string, nu
     return location;
 };
 
-export default { getAllLocations, getLocationById, deleteLocation, updateLocation, addLocation };
+const linkPlantToLocation = async (plantLocation: { plantId: number, locationId: number }): Promise<Location> => {
+    const location = await locationDB.linkPlantToLocation(plantLocation);
+    return location;
+};
+
+const unlinkPlantFromLocation = async (plantLocation: { plantId: number, locationId: number }): Promise<Location> => {
+    const location = await locationDB.unlinkPlantFromLocation(plantLocation);
+    return location;
+};
+
+
+export default { getAllLocations, getLocationById, deleteLocation, updateLocation, addLocation, linkPlantToLocation, unlinkPlantFromLocation };

@@ -84,4 +84,47 @@ const updateLocation = async ({ id, name, description, street, number, town }) =
     return locationMapper(prismaLocation);
 };
 
-export default { getAllLocations, addLocation, getLocationById, deleteLocation, updateLocation };
+const linkPlantToLocation = async ({ plantId, locationId }: { plantId: number, locationId: number }): Promise<Location> => {
+    try {
+      const prismaLocation = await database.location.update({
+        where: { id: locationId },
+        data: {
+          plants: {
+            connect: { id: plantId },
+          },
+        },
+        include: {
+          plants: true,
+        },
+      });
+      return locationMapper(prismaLocation);
+    } catch (error) {
+      throw new Error('Error linking plant to location in the database');
+    }
+  };
+  
+
+  const unlinkPlantFromLocation = async ({ plantId }: { plantId: number }): Promise<Location> => {
+    try {
+      const prismaLocation = await database.location.update({
+        where: { id: plantId },
+        data: {
+          plants: {
+            disconnect: [{ id: plantId }],
+          },
+        },
+        include: {
+          plants: true,
+        },
+      });
+      return locationMapper(prismaLocation);
+    } catch (error) {
+      throw new Error('Error unlinking plant from location in the database');
+    }
+  };
+  
+  
+  
+  
+
+export default { getAllLocations, addLocation, getLocationById, deleteLocation, updateLocation, linkPlantToLocation, unlinkPlantFromLocation };

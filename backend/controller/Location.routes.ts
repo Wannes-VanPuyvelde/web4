@@ -28,7 +28,7 @@
  */
 import express, { Request, Response } from 'express';
 import LocationService from '../service/Location.service';
-import { LocationInput } from '../types/LocationInput';
+import { LocationInput, LocationBasicInput } from '../types/LocationInput';
 import jwtMiddleware from './authMiddleware';
 
 const locationRouter = express.Router();
@@ -274,8 +274,8 @@ locationRouter.put('/:id', (req: Request, res: Response) => {
 
 locationRouter.post('/add', (req: Request, res: Response) => {
     try {
-        const locationInput: LocationInput = req.body;
-        const parseLocation: LocationInput = {
+        const locationInput: LocationBasicInput = req.body;
+        const parseLocation: LocationBasicInput = {
             id: locationInput.id,
             name: locationInput.name,
             description: locationInput.description,
@@ -289,6 +289,87 @@ locationRouter.post('/add', (req: Request, res: Response) => {
         res.status(500).json({ status: 'error', message: error.message });
     }
 });
+
+// Link plant to location
+/**
+ * @swagger
+ * /locations/{locationId}/plants/{plantId}:
+ *   post:
+ *     summary: Link a plant to a location
+ *     parameters:
+ *       - in: path
+ *         name: locationId
+ *         required: true
+ *         description: ID of the location
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: plantId
+ *         required: true
+ *         description: ID of the plant
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Plant successfully linked to the location.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Location'
+ *       500:
+ *         description: An error has occurred, see error message for more details.
+ */
+locationRouter.post('/:locationId/plants/:plantId', async (req: Request, res: Response) => {
+    try {
+        const locationId = parseInt(req.params.locationId);
+        const plantId = parseInt(req.params.plantId);
+        const location = await LocationService.linkPlantToLocation({locationId, plantId});
+        res.status(200).send(location);
+    } catch (error) {
+        res.status(500).json({ error: 'error', errorMessage: error.message });
+    }
+});
+
+// Unlink plant from location
+/**
+ * @swagger
+ * /locations/{locationId}/plants/{plantId}:
+ *   delete:
+ *     summary: Unlink a plant from a location
+ *     parameters:
+ *       - in: path
+ *         name: locationId
+ *         required: true
+ *         description: ID of the location
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: plantId
+ *         required: true
+ *         description: ID of the plant
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Plant successfully unlinked from the location.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Location'
+ *       500:
+ *         description: An error has occurred, see error message for more details.
+ */
+locationRouter.delete('/:locationId/plants/:plantId', async (req: Request, res: Response) => {
+    try {
+        const locationId = parseInt(req.params.locationId);
+        const plantId = parseInt(req.params.plantId);
+        const location = await LocationService.unlinkPlantFromLocation({locationId, plantId});
+        res.status(200).send(location);
+    } catch (error) {
+        res.status(500).json({ error: 'error', errorMessage: error.message });
+    }
+});
+
 
 
 export { locationRouter };
